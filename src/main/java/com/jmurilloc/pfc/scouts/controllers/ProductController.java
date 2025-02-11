@@ -1,11 +1,14 @@
 package com.jmurilloc.pfc.scouts.controllers;
 
 import com.jmurilloc.pfc.scouts.entities.Product;
+import com.jmurilloc.pfc.scouts.exceptions.ProductCouldntCreateException;
 import com.jmurilloc.pfc.scouts.exceptions.ProductNotFoundException;
 import com.jmurilloc.pfc.scouts.services.ProductService;
 import com.jmurilloc.pfc.scouts.util.BuildDate;
 import com.jmurilloc.pfc.scouts.util.MessageError;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -72,7 +75,35 @@ public class ProductController {
         return products;
     }
 
-    private Map<String,Object> createJson(List<Product> products){
+    @PostMapping
+    public ResponseEntity<Product> save(@RequestBody Product product){
+        Product p = service.saveProduct(product);
+        if (p == null){
+            throw new ProductCouldntCreateException(MessageError.CREATE_ERROR.getValue());
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(p);
+    }
+    @PostMapping("/{id}")
+    public ResponseEntity<Product> update(@PathVariable Long id,@RequestBody Product product){
+        product.setId(id);
+        Optional<Product> productOptional = service.findById(id);
+        if (productOptional.isPresent()){
+            Product p = service.update(product);
+            return ResponseEntity.status(HttpStatus.CREATED).body(p);
+        }
+        throw new ProductNotFoundException(MessageError.PRODUCT_NOT_FOUND.getValue());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id){
+        Optional<Product> product = service.findById(id);
+        product.ifPresentOrElse(product1 -> service.deleteProduct(product1.getId()),() -> {throw new ProductNotFoundException(MessageError.PRODUCT_NOT_FOUND.getValue());});
+
+        return ResponseEntity.status(HttpStatus.CREATED).body("Producto eliminado con exito");
+    }
+
+
+    private Map<String,Object> createJsonMap(List<Product> products){
         Map<String,Object> json = new HashMap<>();
         for (Product producto : products) {
             json.put("Producto " + producto.getId(), producto);

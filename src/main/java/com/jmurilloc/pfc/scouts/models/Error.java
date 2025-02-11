@@ -5,7 +5,7 @@ import java.util.Date;
 public class Error {
 
     private String message;
-    private String error;
+    private String errorSpecification;
     private int status;
     private Date date;
 
@@ -17,12 +17,12 @@ public class Error {
         this.message = message;
     }
 
-    public String getError() {
-        return error;
+    public String getErrorSpecification() {
+        return errorSpecification;
     }
 
-    public void setError(String error) {
-        this.error = error;
+    public void setErrorSpecification(String errorSpecification) {
+        this.errorSpecification = errorSpecification;
     }
 
     public int getStatus() {

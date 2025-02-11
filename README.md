@@ -41,7 +41,6 @@ En el caso de mi proyecto, he usado una distribución con los siguientes paquete
   - services
   - util
 
-
 ## MANEJO DE ERRORES
 
 Para los errores, he creado una clase llamada ***HandlerExceptionController*** en el package *controller*.

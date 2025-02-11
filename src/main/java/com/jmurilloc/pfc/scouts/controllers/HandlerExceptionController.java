@@ -17,7 +17,7 @@ public class HandlerExceptionController {
     public ResponseEntity<Error> notFoundEx(ProductNotFoundException e){
         Error error = new Error();
         error.setDate(new Date());
-        error.setError("Api rest no encontrado");
+        error.setErrorSpecification("Api rest no encontrado");
         error.setMessage(e.getMessage());
         error.setStatus(HttpStatus.NOT_FOUND.value());
         return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body(error);

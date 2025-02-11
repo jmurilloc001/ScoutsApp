@@ -10,6 +10,46 @@ Cuenta con las siguientes características:
 - Servicio que provee la gestión de pedidos. (Tienda)
 - Un inventario de los materiales con los que cuenta el grupo.
 - Post noticias sobre el grupo. (Acampadas, actividades, rutas...)
+- Registro de asistencia a las reuniones y salidas de los educandos.
+
+## BBDD
+
+En este caso, he querido variar, y he usado como ***BBDD*** *PostgreSQL* 
+
+Es un sistema gestor de base de datos objeto-relacional, lo que hace que sea una opción muy potente para mi programa.
+
+Las tablas las he creado con Hibernate y JPA, desde las clases @Entity
+
+En este caso he creado las tablas:
+
+- Producto
+
+
+
+
+
+
+## ¿CÓMO HE DIVIDIDO EL PROYECTO?
+
+En el caso de mi proyecto, he usado una distribución con los siguientes paquetes:
+
+  - controllers
+  - entities
+  - exceptions
+  - models
+  - repositories
+  - services
+  - util
+
+
+## MANEJO DE ERRORES
+
+Para los errores, he creado una clase llamada ***HandlerExceptionController*** en el package *controller*.
+
+Esta clase lo que se ocupa es de en el caso de haber un problema, crear un **ResponseEntity<Error>**.
+La clase Error, es una creada por mi en el package *models*, y cuenta con propiedades básicas como la fecha, el mensaje, o el status de la request.
+
+Además de todo esto, he creado alguna excepción nueva, como ***ProductNotFoundException***.
 
 ## IDE 
 
@@ -31,5 +71,5 @@ Para crear el proyecto, he usado ***Spring initializr***.
   - **Spring Boot DevTools**
   - **Spring Web**
   - **Spring Boot Actuator**
-  - **PostgrestSQL Driver**
+  - **JPA**
 

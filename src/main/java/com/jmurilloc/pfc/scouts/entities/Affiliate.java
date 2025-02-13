@@ -20,7 +20,7 @@ public class Affiliate {
     private Date inscripcionDate;
     private String seccion;
 
-    @ManyToMany(mappedBy = "educandos",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "educandos")
     private Set<Meeting> reuniones = new HashSet<>();
 
     public Affiliate() {

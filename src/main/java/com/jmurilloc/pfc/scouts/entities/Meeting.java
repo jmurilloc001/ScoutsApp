@@ -18,7 +18,7 @@ public class Meeting {
     @Column(name = "date_meeting",unique = true)
     private Date dateMeeting;
 
-    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE},fetch = FetchType.LAZY)
     @JoinTable(
             name = "educando_metting",
             joinColumns = @JoinColumn(name = "meeting_id"), inverseJoinColumns = @JoinColumn(name = "educando_id")

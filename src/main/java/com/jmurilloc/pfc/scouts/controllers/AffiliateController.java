@@ -1,48 +1,54 @@
 package com.jmurilloc.pfc.scouts.controllers;
 
 import com.jmurilloc.pfc.scouts.entities.Affiliate;
-import com.jmurilloc.pfc.scouts.entities.Meeting;
-import com.jmurilloc.pfc.scouts.exceptions.MettingOrAffiliateNotFoundException;
+import com.jmurilloc.pfc.scouts.exceptions.AffiliateNotFoundException;
 import com.jmurilloc.pfc.scouts.services.AffiliateService;
-import com.jmurilloc.pfc.scouts.services.MeetingService;
 import com.jmurilloc.pfc.scouts.util.MessageError;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/affiliate")
+@RequestMapping("/affiliates")
 public class AffiliateController {
 
-    private MeetingService meetingService;
     private AffiliateService service;
+    private RestTemplate restTemplate;
 
     @Autowired
-    public AffiliateController(MeetingService meetingService,AffiliateService service) {
+    public AffiliateController(AffiliateService service,RestTemplate restTemplate) {
         this.service = service;
-        this.meetingService = meetingService;
+        this.restTemplate = restTemplate;
     }
 
-    @PostMapping("/{affiliateId}/meeting/{meetingId}") //Añade un educando a una reunion, pero no se mete en la nueva tabla
-    public Affiliate enrollMeetingToAffiliate(
-            @PathVariable Long meetingId,
-            @PathVariable Long affiliateId
-    ){
-        Optional<Meeting> optionalMeeting = meetingService.findById(meetingId);
-        Optional<Affiliate> optionalAffiliate = service.findById(affiliateId);
-
-        if (optionalMeeting.isPresent() && optionalAffiliate.isPresent()){
-            Affiliate affiliate = optionalAffiliate.get();
-
-            //si le pongo getReuniones, después me estaría eneñando tdo el rato en bucle las cosas
-            affiliate.conseguirReuniones().add(optionalMeeting.get()); //Añado la reunion a la lista
-
-            return service.save(affiliate);
+    @GetMapping("/{id}")
+    public Affiliate finById(@PathVariable Long id){
+        Optional<Affiliate> optionalAffiliate = service.findById(id);
+        if (optionalAffiliate.isPresent()){
+            return optionalAffiliate.get();
         }
-        throw new MettingOrAffiliateNotFoundException(MessageError.MEEATING_AND_AFFILIATE_NOT_FOUND.getValue());
+        throw new AffiliateNotFoundException(MessageError.AFFILIATE_NOT_FOUND.getValue());
     }
+
+//    @PostMapping("/{affiliateId}/meetings/{meetingId}") //Añade un educando a una reunion, pero no se mete en la nueva tabla
+//    public Affiliate enrollMeetingToAffiliate(
+//            @PathVariable Long meetingId,
+//            @PathVariable Long affiliateId
+//    ){
+//        String url = "http://localhost:8080/meetings/"+meetingId;
+//        Meeting meeting = restTemplate.getForObject(url, Meeting.class);
+//        Optional<Affiliate> optionalAffiliate = service.findById(affiliateId);
+//
+//        if (optionalAffiliate.isPresent()){
+//            Affiliate affiliate = optionalAffiliate.get();
+//
+//            //si le pongo getReuniones, después me estaría enseñando tdo el rato en bucle las cosas
+//            affiliate.getReuniones().add(meeting); //Añado la reunion a la lista
+//
+//            return service.save(affiliate);
+//        }
+//        throw new MettingOrAffiliateNotFoundException(MessageError.MEEATING_AND_AFFILIATE_NOT_FOUND.getValue());
+//    }
 }

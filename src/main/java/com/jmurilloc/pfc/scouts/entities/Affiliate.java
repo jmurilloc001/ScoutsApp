@@ -20,12 +20,8 @@ public class Affiliate {
     @Column(name = "inscripcion_date")
     private Date inscripcionDate;
     private String seccion;
-    @ManyToMany
-    @JoinTable(
-            name = "educando_metting",
-            joinColumns = @JoinColumn(name = "educando_id"),
-            inverseJoinColumns = @JoinColumn(name = "course_id")
-    )
+
+    @ManyToMany(mappedBy = "educandos",cascade = CascadeType.PERSIST)
     private Set<Meeting> reuniones = new HashSet<>();
 
     public Affiliate() {
@@ -98,23 +94,23 @@ public class Affiliate {
         this.seccion = seccion;
     }
 
-    public Set<Meeting> conseguirReuniones() {
+    public Set<Meeting> getReuniones() {
         return reuniones;
     }
 
-    public Map<String,Map<String,Object>> getReuniones() { //Hago este get, porque si no, estaría tdo el rato llamandose de uno a otro
-        Map<String,Map<String,Object>> json = new HashMap<>();
-        for (Meeting reunione : reuniones) {
-            Map<String,Object> reunion = new HashMap<>();
-
-            reunion.put("Id",reunione.getId());
-            reunion.put("Date",reunione.getDateMeeting());
-            reunion.put("Número educandos",reunione.getEducandos().size());
-
-            json.put("Reunion "+ reunione.getId(),reunion);
-        }
-        return json;
-    }
+//    public Map<String,Map<String,Object>> getReuniones() { //Hago este get, porque si no, estaría tdo el rato llamandose de uno a otro
+//        Map<String,Map<String,Object>> json = new HashMap<>();
+//        for (Meeting reunione : reuniones) {
+//            Map<String,Object> reunion = new HashMap<>();
+//
+//            reunion.put("Id",reunione.getId());
+//            reunion.put("Date",reunione.getDateMeeting());
+//            reunion.put("Número educandos",reunione.getEducandos().size());
+//
+//            json.put("Reunion "+ reunione.getId(),reunion);
+//        }
+//        return json;
+//    }
 
     public void setReuniones(Set<Meeting> reuniones) {
         this.reuniones = reuniones;

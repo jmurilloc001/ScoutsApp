@@ -1,29 +1,28 @@
 package com.jmurilloc.pfc.scouts.controllers;
 
-import com.jmurilloc.pfc.scouts.entities.Affiliate;
 import com.jmurilloc.pfc.scouts.entities.Meeting;
+
 import com.jmurilloc.pfc.scouts.exceptions.MettingNotFound;
-import com.jmurilloc.pfc.scouts.exceptions.MettingOrAffiliateNotFoundException;
-import com.jmurilloc.pfc.scouts.services.AffiliateService;
 import com.jmurilloc.pfc.scouts.services.MeetingService;
 import com.jmurilloc.pfc.scouts.util.MessageError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/meeting")
+@RequestMapping("/meetings")
 public class MeetingController {
 
+    private RestTemplate restTemplate;
     private MeetingService service;
-    private AffiliateService affiliateService;
 
     @Autowired
-    public MeetingController(MeetingService service,AffiliateService affiliateService) {
+    public MeetingController(MeetingService service,RestTemplate restTemplate) {
         this.service = service;
-        this.affiliateService = affiliateService;
+        this.restTemplate = restTemplate;
     }
 
     @GetMapping
@@ -34,22 +33,20 @@ public class MeetingController {
         }
         return meetings;
     }
+    @GetMapping("/{id}")
+    public Meeting finById(@PathVariable Long id){
+        Optional<Meeting> optionalMeeting = service.findById(id);
+        if (optionalMeeting.isPresent()){
+            return optionalMeeting.get();
+        }
+        throw new MettingNotFound(MessageError.MEEATING_NOT_FOUND.getValue());
+    }
 
-    @PostMapping("/{meetingId}/affiliate/{affiliateId}") //Añade un educando a una reunion, pero no se mete en la nueva tabla
-    public Meeting enrollMeetingToAffiliate(
+    @PostMapping("/{meetingId}/affiliates/{affiliateId}") //Añade un educando a una reunion, pero no se mete en la nueva tabla
+    public void enrollMeetingToAffiliate(
             @PathVariable Long meetingId,
             @PathVariable Long affiliateId
     ){
-        Optional<Meeting> optionalMeeting = service.findById(meetingId);
-        Optional<Affiliate> optionalAffiliate = affiliateService.findById(affiliateId);
 
-        if (optionalMeeting.isPresent() && optionalAffiliate.isPresent()){
-            Meeting meeting =  optionalMeeting.get();
-
-            meeting.getEducandos().add(optionalAffiliate.get()); //Añado el afiliado a la lista
-
-            return service.save(meeting);
-        }
-        throw new MettingOrAffiliateNotFoundException(MessageError.MEEATING_AND_AFFILIATE_NOT_FOUND.getValue());
     }
 }

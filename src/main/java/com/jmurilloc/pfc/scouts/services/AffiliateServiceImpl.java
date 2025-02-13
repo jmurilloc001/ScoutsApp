@@ -1,6 +1,7 @@
 package com.jmurilloc.pfc.scouts.services;
 
 import com.jmurilloc.pfc.scouts.entities.Affiliate;
+import com.jmurilloc.pfc.scouts.projections.AffiliateMeetingProjection;
 import com.jmurilloc.pfc.scouts.repositories.AffiliatesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,4 +27,5 @@ public class AffiliateServiceImpl implements AffiliateService {
     public Affiliate save(Affiliate affiliate) {
         return repository.save(affiliate);
     }
+
 }

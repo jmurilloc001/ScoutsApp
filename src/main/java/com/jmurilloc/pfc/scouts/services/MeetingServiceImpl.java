@@ -4,6 +4,7 @@ import com.jmurilloc.pfc.scouts.entities.Meeting;
 import com.jmurilloc.pfc.scouts.repositories.MeetingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,16 +19,19 @@ public class MeetingServiceImpl implements MeetingService{
         this.repository = repository;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<Meeting> findById(Long id) {
         return repository.findById(id);
     }
 
+    @Transactional
     @Override
     public Meeting save(Meeting meeting) {
         return repository.save(meeting);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<Meeting> findAll() {
         return repository.findAll();

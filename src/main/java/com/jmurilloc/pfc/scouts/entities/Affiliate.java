@@ -1,6 +1,5 @@
 package com.jmurilloc.pfc.scouts.entities;
 
-import com.jmurilloc.pfc.scouts.util.Seccions;
 import jakarta.persistence.*;
 
 import java.util.*;
@@ -21,7 +20,7 @@ public class Affiliate {
     private Date inscripcionDate;
     private String seccion;
 
-    @ManyToMany(mappedBy = "educandos",cascade = CascadeType.PERSIST)
+    @ManyToMany(mappedBy = "educandos",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private Set<Meeting> reuniones = new HashSet<>();
 
     public Affiliate() {

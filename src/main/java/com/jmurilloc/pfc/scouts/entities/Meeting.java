@@ -1,10 +1,10 @@
 package com.jmurilloc.pfc.scouts.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 //Reuniones
@@ -18,7 +18,7 @@ public class Meeting {
     @Column(name = "date_meeting",unique = true)
     private Date dateMeeting;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     @JoinTable(
             name = "educando_metting",
             joinColumns = @JoinColumn(name = "meeting_id"), inverseJoinColumns = @JoinColumn(name = "educando_id")

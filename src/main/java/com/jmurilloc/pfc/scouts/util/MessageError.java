@@ -5,7 +5,8 @@ public enum MessageError {
     CREATE_ERROR,
     MEEATING_AND_AFFILIATE_NOT_FOUND,
     MEEATING_NOT_FOUND,
-    AFFILIATE_NOT_FOUND;
+    AFFILIATE_NOT_FOUND,
+    AFFILIATE_IN_MEETING;
 
     private String value;
 
@@ -16,6 +17,7 @@ public enum MessageError {
             case MEEATING_AND_AFFILIATE_NOT_FOUND -> value = "No se ha encontrado la reunión o al afiliado";
             case MEEATING_NOT_FOUND -> value = "No se ha encontrado ninguna reunion";
             case AFFILIATE_NOT_FOUND -> value = "No se ha encontrado al afiliado";
+            case AFFILIATE_IN_MEETING -> value = "Ya esta ese educando en la reunion";
             default -> value = "Ningun error está implementado";
 
         }

@@ -2,7 +2,7 @@ package com.jmurilloc.pfc.scouts.controllers;
 
 
 import com.jmurilloc.pfc.scouts.exceptions.AffiliateNotFoundException;
-import com.jmurilloc.pfc.scouts.exceptions.MettingNotFound;
+import com.jmurilloc.pfc.scouts.exceptions.MeetingNotFound;
 import com.jmurilloc.pfc.scouts.exceptions.MettingOrAffiliateNotFoundException;
 import com.jmurilloc.pfc.scouts.exceptions.ProductNotFoundException;
 import com.jmurilloc.pfc.scouts.models.Error;
@@ -16,7 +16,7 @@ import java.util.Date;
 @RestControllerAdvice
 public class HandlerExceptionController {
 
-    @ExceptionHandler({ProductNotFoundException.class, AffiliateNotFoundException.class, MettingNotFound.class, MettingOrAffiliateNotFoundException.class})
+    @ExceptionHandler({ProductNotFoundException.class, AffiliateNotFoundException.class, MeetingNotFound.class, MettingOrAffiliateNotFoundException.class})
     public ResponseEntity<Error> notFoundEx(Exception e){
         Error error = new Error();
         error.setDate(new Date());

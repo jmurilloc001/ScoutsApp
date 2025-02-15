@@ -63,8 +63,11 @@ public class MeetingController {
         } catch (RestClientException e) {
             throw new AffiliateNotFoundException(MessageError.AFFILIATE_NOT_FOUND.getValue());
         }
+
         if (optionalMeeting.isPresent()){
+
             Meeting meeting = optionalMeeting.get();
+
             Set<Affiliate> affiliates = meeting.getEducandos();
             if (affiliates.contains(affiliate)){
                 throw new AffiliateInMeetingException(MessageError.AFFILIATE_IN_MEETING.getValue());
@@ -73,6 +76,7 @@ public class MeetingController {
             service.save(meeting);
             return ResponseEntity.status(HttpStatus.CREATED).body("Educando añadido correctamente");
         }
+
         throw new MeetingNotFound(MessageError.MEEATING_NOT_FOUND.getValue());
     }
 }

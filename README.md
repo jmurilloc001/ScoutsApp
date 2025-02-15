@@ -57,7 +57,7 @@ El *IDE* que he usado para realizar el proyecto es IntelliJ Community.
 El IDE, es gratuito, y tiene su versión de pago, **Ultimate**. La versión **Community** no cuenta con la integración
 con Spring Boot.
 
-Por lo tanto, la creación del proyecto, la he tenido que hacer de manera externa.
+Por lo tanto, la creación del proyecto, la he tenido que hacer de manera externa usando Spring Initializr.
 
 ## Inicialización del proyecto
 
@@ -70,5 +70,8 @@ Para crear el proyecto, he usado ***Spring initializr***.
   - **Spring Boot DevTools**
   - **Spring Web**
   - **Spring Boot Actuator**
-  - **JPA**
+  - **Spring Boot JPA**
+  - **PostGres SQL**
+  - **Spring Security**
+  - **Spring Validator**
 

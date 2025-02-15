@@ -1,6 +1,5 @@
 package com.jmurilloc.pfc.scouts.entities;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -54,6 +53,7 @@ public class Meeting {
     public void setDateMeeting(Date dateMeeting) {
         this.dateMeeting = dateMeeting;
     }
+
 
     public Set<Affiliate> getEducandos() {
         return educandos;

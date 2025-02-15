@@ -1,5 +1,6 @@
 package com.jmurilloc.pfc.scouts.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.*;
@@ -21,7 +22,11 @@ public class Affiliate {
     private String seccion;
 
     @ManyToMany(mappedBy = "educandos")
+    @JsonIgnore
     private Set<Meeting> reuniones = new HashSet<>();
+
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true,mappedBy = "affiliate")
+    private User user;
 
     public Affiliate() {
     }

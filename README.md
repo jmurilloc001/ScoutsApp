@@ -89,4 +89,27 @@ Para crear el proyecto, he usado ***Spring initializr***.
   - **PostGres SQL**
   - **Spring Security**
   - **Spring Validator**
+  - **JWT**
+
+## RUTAS
+
+Por controladores:
+
+- UserController:
+
+  - GET: /users    
+  - GET: /users/{id}
+  - POST: /users
+  - POST: /users/register
+  - PUT: /users/{id}
+  - DELETE: /users/{id} -> NO ESTÁ TERMINADO
+  - PATCH: /users/{userid}/affiliates/{affiliateid}
+  
+- AffiliateController:
+
+  - GET: /affiliates
+  - GET: /affiliates/{id}
+  - POST: /affiliates
+  - DELETE: /affiliates/{id}
+  - PUT: /users/{id} -> NO ESTÁ TERMINADO
 

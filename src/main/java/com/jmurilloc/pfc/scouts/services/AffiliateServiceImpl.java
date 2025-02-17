@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -28,6 +29,18 @@ public class AffiliateServiceImpl implements AffiliateService {
     @Override
     public Affiliate save(Affiliate affiliate) {
         return repository.save(affiliate);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<Affiliate> findAll() {
+        return repository.findAll();
+    }
+
+    @Transactional
+    @Override
+    public void delete(Affiliate affiliate) {
+       repository.delete(affiliate);
     }
 
 }

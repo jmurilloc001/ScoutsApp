@@ -19,6 +19,10 @@ public class UserDto {
         this.enabled = enabled;
     }
 
+    public UserDto(String username) {
+        this.username = username;
+    }
+
     public String getUsername() {
         return username;
     }

@@ -1,7 +1,8 @@
 package com.jmurilloc.pfc.scouts.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.util.*;
 
@@ -14,15 +15,20 @@ public class Affiliate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
+    @Size(min = 2,max = 25)
     private String name;
+
+    @NotBlank
+    @Size(min = 2,max = 25)
     private String lastname;
     private Date birthday;
     @Column(name = "inscripcion_date")
     private Date inscripcionDate;
+    @NotBlank
     private String seccion;
 
     @ManyToMany(mappedBy = "educandos")
-    @JsonIgnore
     private Set<Meeting> reuniones = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true,mappedBy = "affiliate")
@@ -102,22 +108,16 @@ public class Affiliate {
         return reuniones;
     }
 
-//    public Map<String,Map<String,Object>> getReuniones() { //Hago este get, porque si no, estaría tdo el rato llamandose de uno a otro
-//        Map<String,Map<String,Object>> json = new HashMap<>();
-//        for (Meeting reunione : reuniones) {
-//            Map<String,Object> reunion = new HashMap<>();
-//
-//            reunion.put("Id",reunione.getId());
-//            reunion.put("Date",reunione.getDateMeeting());
-//            reunion.put("Número educandos",reunione.getEducandos().size());
-//
-//            json.put("Reunion "+ reunione.getId(),reunion);
-//        }
-//        return json;
-//    }
-
     public void setReuniones(Set<Meeting> reuniones) {
         this.reuniones = reuniones;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override

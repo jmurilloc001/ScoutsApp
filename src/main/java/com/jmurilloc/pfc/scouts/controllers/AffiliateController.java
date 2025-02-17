@@ -1,13 +1,22 @@
 package com.jmurilloc.pfc.scouts.controllers;
 
 import com.jmurilloc.pfc.scouts.entities.Affiliate;
+import com.jmurilloc.pfc.scouts.entities.dto.AffiliateDto;
 import com.jmurilloc.pfc.scouts.exceptions.AffiliateNotFoundException;
 import com.jmurilloc.pfc.scouts.services.AffiliateService;
+import com.jmurilloc.pfc.scouts.util.BuildDto;
 import com.jmurilloc.pfc.scouts.util.MessageError;
+import com.jmurilloc.pfc.scouts.util.UtilValidation;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -15,40 +24,59 @@ import java.util.Optional;
 public class AffiliateController {
 
     private AffiliateService service;
-    private RestTemplate restTemplate;
+    // private RestTemplate restTemplate;
 
     @Autowired
-    public AffiliateController(AffiliateService service,RestTemplate restTemplate) {
+    public AffiliateController(AffiliateService service) {
         this.service = service;
-        this.restTemplate = restTemplate;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    @GetMapping
+    public List<AffiliateDto> index(){
+        List<Affiliate> affiliates = service.findAll();
+        if (affiliates.isEmpty()){
+            throw new AffiliateNotFoundException(MessageError.AFFILIATE_NOT_FOUND.getValue());
+        }
+        List<AffiliateDto> affiliateDtos = new ArrayList<>();
+        affiliates.forEach(affiliate -> affiliateDtos.add(BuildDto.buildAffiliateDto(affiliate)));
+        return affiliateDtos;
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @GetMapping("/{id}")
-    public Affiliate finById(@PathVariable Long id){
+    public AffiliateDto findById(@PathVariable Long id){
         Optional<Affiliate> optionalAffiliate = service.findById(id);
         if (optionalAffiliate.isPresent()){
-            return optionalAffiliate.get();
+            Affiliate affiliate = optionalAffiliate.orElseThrow();
+
+            return BuildDto.buildAffiliateDto(affiliate);
         }
         throw new AffiliateNotFoundException(MessageError.AFFILIATE_NOT_FOUND.getValue());
     }
 
-//    @PostMapping("/{affiliateId}/meetings/{meetingId}") //Añade un educando a una reunion, pero no se mete en la nueva tabla
-//    public Affiliate enrollMeetingToAffiliate(
-//            @PathVariable Long meetingId,
-//            @PathVariable Long affiliateId
-//    ){
-//        String url = "http://localhost:8080/meetings/"+meetingId;
-//        Meeting meeting = restTemplate.getForObject(url, Meeting.class);
-//        Optional<Affiliate> optionalAffiliate = service.findById(affiliateId);
-//
-//        if (optionalAffiliate.isPresent()){
-//            Affiliate affiliate = optionalAffiliate.get();
-//
-//            //si le pongo getReuniones, después me estaría enseñando tdo el rato en bucle las cosas
-//            affiliate.getReuniones().add(meeting); //Añado la reunion a la lista
-//
-//            return service.save(affiliate);
-//        }
-//        throw new MettingOrAffiliateNotFoundException(MessageError.MEEATING_AND_AFFILIATE_NOT_FOUND.getValue());
-//    }
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    @PostMapping
+    public ResponseEntity<Object> create(@Valid @RequestBody Affiliate affiliate, BindingResult result){
+        if (result.hasFieldErrors()){
+            return UtilValidation.validation(result);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(affiliate));
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id){
+        Optional<Affiliate> optionalAffiliate = service.findById(id);
+        if (optionalAffiliate.isPresent()){
+            Affiliate affiliate = optionalAffiliate.orElseThrow();
+            service.delete(affiliate);
+        }else return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body(MessageError.AFFILIATE_NOT_FOUND.getValue());
+
+        Optional<Affiliate> optionalAffiliatePostDelete = service.findById(id);
+        if (optionalAffiliatePostDelete.isEmpty()){
+            return ResponseEntity.ok("Affiliado eliminado");
+        }
+        return ResponseEntity.badRequest().body(MessageError.AFFILIATE_NOT_DELETED.getValue());
+    }
 }

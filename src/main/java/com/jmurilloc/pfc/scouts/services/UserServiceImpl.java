@@ -55,9 +55,15 @@ public class UserServiceImpl implements UserService{
         return repository.save(user);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public boolean existsByUsername(String username) {
         return repository.existsByUsername(username);
+    }
+
+    @Transactional
+    @Override
+    public void delete(User user) {
+        repository.delete(user);
     }
 }

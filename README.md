@@ -41,6 +41,21 @@ En el caso de mi proyecto, he usado una distribución con los siguientes paquete
   - services
   - util
 
+## SEGURIDAD
+
+Para la seguridad he usado **SpringSecurity**.
+
+Para ello, he creado una clase User, que está relacionada con la clase Affiliate, creando una relación **one to one**.
+He usado *SpringValidate* para poder validar de forma más efectiva ciertos campos, como que no esten vacios, o en blanco, el nombre, y el password etc.
+
+Además he creado alguna *anotación* propia para algún caso específico, como comprobar si el nombre ya existe en la base de datos.
+A la anotación le he llamado: **@ExistsByUsername**.
+
+He creado una clase de ***Roles*** que es la que indica los permisos que van a tener los usuarios.
+En mi aplicación, todos tienen el rol de usuario, y además, pueden tener otros roles como el de *admin*.
+
+Para la creación de los tokens, he usado ***JWT*** JSON Web Tokens.
+
 ## MANEJO DE ERRORES
 
 Para los errores, he creado una clase llamada ***HandlerExceptionController*** en el package *controller*.

@@ -1,5 +1,6 @@
 package com.jmurilloc.pfc.scouts.entities;
 
+import com.jmurilloc.pfc.scouts.vaidation.ExistsByUsername;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -15,6 +16,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ExistsByUsername //Creada por mi
     @NotBlank
     @Size(min = 4,max = 12)
     @Column(unique = true)

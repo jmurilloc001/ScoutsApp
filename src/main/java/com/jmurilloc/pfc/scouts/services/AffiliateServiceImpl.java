@@ -14,10 +14,9 @@ public class AffiliateServiceImpl implements AffiliateService {
     private AffiliatesRepository repository;
 
     @Autowired
-    public AffiliateServiceImpl(AffiliatesRepository repository) {
+    public void setRepository(AffiliatesRepository repository) {
         this.repository = repository;
     }
-
 
     @Transactional(readOnly = true)
     @Override
@@ -40,6 +39,10 @@ public class AffiliateServiceImpl implements AffiliateService {
     @Transactional
     @Override
     public void delete(Affiliate affiliate) {
+        if (affiliate.getUser() != null){
+            affiliate.deleteUser(affiliate.getUser());
+        }
+
        repository.delete(affiliate);
     }
 

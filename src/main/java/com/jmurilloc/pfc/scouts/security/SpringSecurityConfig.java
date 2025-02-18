@@ -30,7 +30,7 @@ public class SpringSecurityConfig {
     private AuthenticationConfiguration authenticationConfiguration;
 
     @Autowired
-    public SpringSecurityConfig(AuthenticationConfiguration authenticationConfiguration) {
+    public void setAuthenticationConfiguration(AuthenticationConfiguration authenticationConfiguration) {
         this.authenticationConfiguration = authenticationConfiguration;
     }
 

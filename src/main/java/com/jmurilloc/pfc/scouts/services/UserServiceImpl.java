@@ -21,9 +21,15 @@ public class UserServiceImpl implements UserService{
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder){
-        this.repository = userRepository;
+    public void setRepository(UserRepository repository) {
+        this.repository = repository;
+    }
+    @Autowired
+    public void setRoleRepository(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
+    }
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -42,6 +48,7 @@ public class UserServiceImpl implements UserService{
     @Override
     @Transactional
     public User save(User user) {
+
         Optional<Role> roleUser = roleRepository.findByName(RoleNames.USER.getValue());
 
         roleUser.ifPresent(role -> user.getRoles().add(role));
@@ -64,6 +71,10 @@ public class UserServiceImpl implements UserService{
     @Transactional
     @Override
     public void delete(User user) {
+        if (user.getAffiliate() != null){
+            user.deleteAffiliate(user.getAffiliate());
+        }
+
         repository.delete(user);
     }
 }

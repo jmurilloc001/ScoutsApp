@@ -13,7 +13,7 @@ import java.util.Date;
 @RestControllerAdvice
 public class HandlerExceptionController {
 
-    @ExceptionHandler({ProductNotFoundException.class, AffiliateNotFoundException.class, MeetingNotFound.class, MettingOrAffiliateNotFoundException.class, UserNotFoundException.class})
+    @ExceptionHandler({ProductNotFoundException.class, AffiliateNotFoundException.class, MeetingNotFound.class, MettingOrAffiliateNotFoundException.class, UserNotFoundException.class,RoleNotFoundException.class})
     public ResponseEntity<Error> notFoundEx(Exception e){
         Error error = new Error();
         error.setDate(new Date());
@@ -31,7 +31,7 @@ public class HandlerExceptionController {
         error.setStatus(HttpStatus.BAD_REQUEST.value());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(error);
     }
-    @ExceptionHandler({AffiliateInMeetingException.class})
+    @ExceptionHandler({AffiliateInMeetingException.class,UserWithAffiliateException.class,AffiliateWithUserException.class})
     public ResponseEntity<Error> relationCreatedException(Exception e){
         Error error = new Error();
         error.setDate(new Date());

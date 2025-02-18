@@ -119,6 +119,10 @@ public class Affiliate {
     public void setUser(User user) {
         this.user = user;
     }
+    public void deleteUser(User user){
+        user.setAffiliate(null);
+        this.user = null;
+    }
 
     @Override
     public String toString() {

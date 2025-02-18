@@ -102,6 +102,9 @@ public class User {
     public void addRole(Role role){
         this.roles.add(role);
     }
+    public void deleteRole(Role role){
+        this.roles.remove(role);
+    }
 
     public boolean isAdmin() {
         return admin;
@@ -113,6 +116,10 @@ public class User {
 
     public Affiliate getAffiliate() {
         return affiliate;
+    }
+    public void deleteAffiliate(Affiliate affiliate){
+        affiliate.setUser(null);
+        this.affiliate = null;
     }
 
     public void setAffiliate(Affiliate affiliate) {

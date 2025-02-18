@@ -56,6 +56,13 @@ En mi aplicación, todos tienen el rol de usuario, y además, pueden tener otros
 
 Para la creación de los tokens, he usado ***JWT*** JSON Web Tokens.
 
+## ROLES
+
+- ***ADMIN***
+- ***SCOUTER***
+- ***COORDI***
+- ***USER***
+
 ## MANEJO DE ERRORES
 
 Para los errores, he creado una clase llamada ***HandlerExceptionController*** en el package *controller*.
@@ -97,19 +104,22 @@ Por controladores:
 
 - UserController:
 
-  - GET: /users    
-  - GET: /users/{id}
-  - POST: /users
-  - POST: /users/register
-  - PUT: /users/{id}
-  - DELETE: /users/{id} -> NO ESTÁ TERMINADO
-  - PATCH: /users/{userid}/affiliates/{affiliateid}
+  - GET: /users -> ok
+  - GET: /users/{id} -> ok
+  - POST: /users -> ok
+  - POST: /users/register -> ok (Si tengo un token invalido no va)
+  - PUT: /users/{id} -> ok
+  - DELETE: /users/{id} -> ok
+  - PATCH: /users/{userid}/affiliates/{affiliateid} -> ok
+  - PATCH /users/{id}/password/{password} -> ok
+  - PATCH /users/{id}/role/{role} -> ok
+  - DELETE /users/{id}/role/{role} -> ok
   
 - AffiliateController:
 
-  - GET: /affiliates
-  - GET: /affiliates/{id}
-  - POST: /affiliates
-  - DELETE: /affiliates/{id}
-  - PUT: /users/{id} -> NO ESTÁ TERMINADO
-
+  - GET: /affiliates -> ok
+  - GET: /affiliates/{id} -> ok
+  - POST: /affiliates -> ok
+  - DELETE: /affiliates/{id} -> ok
+  - PUT: /affiliates/{id} -> ok (Tener cuidado en el front, para que se puedan modificar los campos que se quiera, y no todos)
+  - PUT: /affiliates/{id}/importantdata (inscripcion_date, seccion, reuniones) -> ok

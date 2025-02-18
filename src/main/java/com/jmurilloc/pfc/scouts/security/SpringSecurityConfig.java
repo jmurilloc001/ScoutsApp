@@ -50,7 +50,7 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.GET,"/users","/meetings","/affiliates").permitAll()//la ruta /users no necesita autentificación
                         .requestMatchers(HttpMethod.POST,"/users/register").permitAll()
                         .anyRequest().authenticated()) //Las demás rutas si
-                .addFilter(new JwtAuthenticationFilter(authenticationConfiguration.getAuthenticationManager()))
+                .addFilter(new JwtAuthenticationFilter(authenticationManager()))
                 .addFilter(new JwtValidationFilter(authenticationManager()))
                 .csrf(config -> config.disable()) //TODO Esto hay que quitarlo después (Esta linea)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))

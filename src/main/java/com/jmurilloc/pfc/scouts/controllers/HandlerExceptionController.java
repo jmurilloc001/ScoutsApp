@@ -40,5 +40,22 @@ public class HandlerExceptionController {
         error.setStatus(HttpStatus.BAD_REQUEST.value());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(error);
     }
-
+    @ExceptionHandler({ProductNotDeleteException.class})
+    public ResponseEntity<Error> notDeleteException(Exception e){
+        Error error = new Error();
+        error.setDate(new Date());
+        error.setErrorSpecification("No se ha podido borrar");
+        error.setMessage(e.getMessage());
+        error.setStatus(HttpStatus.BAD_REQUEST.value());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(error);
+    }
+    @ExceptionHandler({BadDataException.class})
+    public ResponseEntity<Error> badDataException(Exception e){
+        Error error = new Error();
+        error.setDate(new Date());
+        error.setErrorSpecification("Datos mal introducidos");
+        error.setMessage(e.getMessage());
+        error.setStatus(HttpStatus.BAD_REQUEST.value());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(error);
+    }
 }

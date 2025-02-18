@@ -1,10 +1,12 @@
-package com.jmurilloc.pfc.scouts.vaidation;
+package com.jmurilloc.pfc.scouts.validation;
 
 import com.jmurilloc.pfc.scouts.services.ProductService;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ExistsProductByNameValidation implements ConstraintValidator<ExistsProductByName, String> {
 
     private ProductService service;

@@ -1,12 +1,14 @@
 package com.jmurilloc.pfc.scouts.entities;
 
-import com.jmurilloc.pfc.scouts.vaidation.ExistsProductByName;
+import com.jmurilloc.pfc.scouts.validation.ExistsProductByName;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 import java.util.Date;
+import java.util.Objects;
 
 @Table(name = "products")
 @Entity
@@ -24,7 +26,7 @@ public class Product {
 
     @Positive
     private float price;
-    @Positive
+    @Min(value = 0,message = "El stock debe ser mayor a 0 o 0")
     private int stock;
     private Date lastpurchase;
 
@@ -95,5 +97,17 @@ public class Product {
                 ", stock=" + stock +
                 ", lastpurchase=" + lastpurchase +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return Float.compare(price, product.price) == 0 && stock == product.stock && Objects.equals(id, product.id) && Objects.equals(name, product.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, price, stock);
     }
 }

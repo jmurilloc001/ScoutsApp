@@ -62,11 +62,6 @@ public class ProductServiceImpl implements ProductService{
     public Optional<Product> findById(Long id) {
         return productRepository.findById(id);
     }
-    @Transactional
-    @Override
-    public Product update(Product product) {
-        return productRepository.save(product);
-    }
 
     @Override
     public boolean existsByName(String name) {

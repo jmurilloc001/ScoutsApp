@@ -15,6 +15,5 @@ public interface ProductService {
     Product saveProduct(Product product);
     void deleteProduct(Long id);
     Optional<Product> findById(Long id);
-    Product update(Product product);
     boolean existsByName(String name);
 }

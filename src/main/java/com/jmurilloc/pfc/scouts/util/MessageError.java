@@ -12,6 +12,9 @@ public enum MessageError {
     USER_WITH_AFFILIATE,
     AFFILIATE_WITH_USER,
     USER_NOT_DELETED,
+    PRODUCT_NOT_DELETED,
+    BAD_DATA,
+    VALIDATE_EXISTSPRODUCTBYNAME,
     ROLE_NOT_FOUND;
 
     private String value;
@@ -30,6 +33,9 @@ public enum MessageError {
             case AFFILIATE_WITH_USER -> value = "El afiliado ya tiene un usuario";
             case USER_NOT_DELETED -> value = "No se ha podido borrar el usuario";
             case ROLE_NOT_FOUND -> value = "No se ha encontrado el rol";
+            case BAD_DATA -> value = "Datos mal introducidos";
+            case VALIDATE_EXISTSPRODUCTBYNAME -> value = "ya existe en la base de datos!, escoja otro nombre para el producto";
+            case PRODUCT_NOT_DELETED -> value = "Error al borrar el producto";
             default -> value = "Ningun error está implementado";
 
         }

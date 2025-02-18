@@ -123,3 +123,20 @@ Por controladores:
   - DELETE: /affiliates/{id} -> ok
   - PUT: /affiliates/{id} -> ok (Tener cuidado en el front, para que se puedan modificar los campos que se quiera, y no todos)
   - PUT: /affiliates/{id}/importantdata (inscripcion_date, seccion, reuniones) -> ok
+
+- ProductController:
+
+  - GET: /products -> ok
+  - GET: /produsts?price-min= -> ok
+  - GET: /products?price-max= -> ok
+  - GET: /products?date-after-year= -> ok
+  - GET: /products?date-after-year=...&date-after-month= -> ok
+  - GET: /products?date-after-year=...&date-after-month=...&date-after-day= -> ok
+  - GET: /products/date-after?date=yyyy-MM-dd -> ok
+  - POST: /products -> ok
+  - PUT: /products/{id} -> ok
+  - PATCH: /products/{id} -> ok
+  - DELETE: /products/{id}
+
+
+ERROR IMPORTANTE: UNA VEZ QUE SE ME AÑADEN O ELIMINAN ROLES, NO ME DEJA HACER LOGIN CON EL USUARIO

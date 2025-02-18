@@ -1,6 +1,6 @@
 package com.jmurilloc.pfc.scouts.entities;
 
-import com.jmurilloc.pfc.scouts.vaidation.ExistsByUsername;
+import com.jmurilloc.pfc.scouts.validation.ExistsByUsername;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

@@ -1,4 +1,4 @@
-package com.jmurilloc.pfc.scouts.vaidation;
+package com.jmurilloc.pfc.scouts.validation;
 
 import com.jmurilloc.pfc.scouts.services.UserService;
 import jakarta.validation.ConstraintValidator;

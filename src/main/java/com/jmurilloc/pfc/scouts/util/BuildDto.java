@@ -5,7 +5,7 @@ import com.jmurilloc.pfc.scouts.entities.User;
 import com.jmurilloc.pfc.scouts.entities.dto.AffiliateDto;
 import com.jmurilloc.pfc.scouts.entities.dto.UserDto;
 
-public class BuildDto {
+public abstract class BuildDto {
 
     private BuildDto(){
 

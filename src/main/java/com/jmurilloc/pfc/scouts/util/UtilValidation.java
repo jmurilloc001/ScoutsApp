@@ -10,7 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UtilValidation {
+public abstract class UtilValidation {
+
+    private UtilValidation(){}
 
     public static ResponseEntity<Object> validation(BindingResult result) {
         Map<String,String> errors = new HashMap<>();
@@ -31,7 +33,6 @@ public class UtilValidation {
                 }
                 return newResult;
             }
-            return null;
         }
         return null;
     }

@@ -136,7 +136,7 @@ Por controladores:
   - POST: /products -> ok
   - PUT: /products/{id} -> ok
   - PATCH: /products/{id} -> ok
-  - DELETE: /products/{id}
+  - DELETE: /products/{id} -> COMPROBAR
 
 
 ERROR IMPORTANTE: UNA VEZ QUE SE ME AÑADEN O ELIMINAN ROLES, NO ME DEJA HACER LOGIN CON EL USUARIO

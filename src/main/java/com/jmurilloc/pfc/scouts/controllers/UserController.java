@@ -128,9 +128,12 @@ public class UserController {
     @PreAuthorize("hasAnyRole('ADMIN','COORDI','SCOUTER')")
     @PutMapping("/{id}")
     public ResponseEntity<Object> update(@Valid @RequestBody User user,BindingResult result,@PathVariable Long id){
-        if (result.hasFieldErrors()){
-            return UtilValidation.validation(result);
+
+        BindingResult newResult = UtilValidation.validateWithoutError(MessageError.VALIDATE_EXISTS_USER_BY_USERNAME.getValue(), result);
+        if (newResult != null){
+            return UtilValidation.validation(newResult);
         }
+
         Optional<User> optionalUser = service.findById(id);
         if (optionalUser.isPresent()){
             User u = optionalUser.orElseThrow();

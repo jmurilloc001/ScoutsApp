@@ -112,10 +112,12 @@ public class ProductController {
     @PutMapping("/{id}")
     public ResponseEntity<Object> update(@Valid @RequestBody Product product,BindingResult result,@PathVariable Long id){
 
-        BindingResult newResult = UtilValidation.validateWithoutError(MessageError.VALIDATE_EXISTSPRODUCTBYNAME.getValue(), result);
+        BindingResult newResult = UtilValidation.validateWithoutError(MessageError.VALIDATE_EXISTS_PRODUCT_BY_NAME.getValue(), result);
         if (newResult != null){
             return UtilValidation.validation(newResult);
         }
+
+
         Optional<Product> productOptional = service.findById(id);
         if (productOptional.isPresent()){
             product.setId(id);
@@ -131,7 +133,7 @@ public class ProductController {
 
         //TODO PREGUNTAR PARA VER SI SE PUEDE MEJORAR
 
-        BindingResult newResult = UtilValidation.validateWithoutError(MessageError.VALIDATE_EXISTSPRODUCTBYNAME.getValue(), result);
+        BindingResult newResult = UtilValidation.validateWithoutError(MessageError.VALIDATE_EXISTS_PRODUCT_BY_NAME.getValue(), result);
         if (newResult != null){
             return UtilValidation.validation(newResult);
         }

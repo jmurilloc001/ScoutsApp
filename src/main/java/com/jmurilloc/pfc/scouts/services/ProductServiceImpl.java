@@ -67,4 +67,9 @@ public class ProductServiceImpl implements ProductService{
     public Product update(Product product) {
         return productRepository.save(product);
     }
+
+    @Override
+    public boolean existsByName(String name) {
+        return productRepository.existsByName(name);
+    }
 }

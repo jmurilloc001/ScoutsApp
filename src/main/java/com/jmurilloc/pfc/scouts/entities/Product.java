@@ -1,6 +1,10 @@
 package com.jmurilloc.pfc.scouts.entities;
 
+import com.jmurilloc.pfc.scouts.vaidation.ExistsProductByName;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 import java.util.Date;
 
@@ -13,8 +17,14 @@ public class Product {
     private Long id;
 
 
+    @ExistsProductByName
+    @NotBlank
+    @Size(min = 2,max = 40)
     private String name;
+
+    @Positive
     private float price;
+    @Positive
     private int stock;
     private Date lastpurchase;
 

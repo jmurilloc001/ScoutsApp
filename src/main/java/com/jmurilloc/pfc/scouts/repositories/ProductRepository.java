@@ -13,5 +13,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByPriceGreaterThan(float amount);
     List<Product> findByPriceLessThan(float amount);
     List<Product> findByLastpurchaseAfter(Date date);
+    boolean existsByName(String name);
 
 }

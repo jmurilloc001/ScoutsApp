@@ -5,6 +5,7 @@ import com.jmurilloc.pfc.scouts.entities.Role;
 import com.jmurilloc.pfc.scouts.entities.User;
 import com.jmurilloc.pfc.scouts.entities.dto.UserDto;
 import com.jmurilloc.pfc.scouts.exceptions.*;
+import com.jmurilloc.pfc.scouts.security.SimpleGrantedAuthorityJsonCreator;
 import com.jmurilloc.pfc.scouts.services.AffiliateService;
 import com.jmurilloc.pfc.scouts.services.RoleService;
 import com.jmurilloc.pfc.scouts.services.UserService;
@@ -19,9 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @CrossOrigin(origins = {"http://localhost:4200"})
 @RestController
@@ -172,26 +171,39 @@ public class UserController {
 
     @PreAuthorize("hasAnyRole('ADMIN','COORDI')")
     @PatchMapping("/{id}/role/{role}")
-    public ResponseEntity<Object> addRole(@PathVariable Long id, @PathVariable String role){
+    public ResponseEntity<Object> addRole(@PathVariable Long id, @PathVariable String role) {
 
-        role = "role_" + role;
-        role = role.toUpperCase();
-        role = role.replace(" ","");
+        // Normalizar el nombre del rol
+        role = "ROLE_" + role.toUpperCase().replace(" ", "");
 
+        // Buscar el rol en la base de datos
         Optional<Role> optionalRole = roleService.findByName(role);
-        if (optionalRole.isPresent()){
-            Role r = optionalRole.orElseThrow();
+        if (!optionalRole.isPresent()) {
+            throw new RoleNotFoundException(MessageError.ROLE_NOT_FOUND.getValue());
+        }
 
-            Optional<User> optionalUser = service.findById(id);
-            if (optionalUser.isPresent()){
-                User user = optionalUser.orElseThrow();
-                user.addRole(r);
-                service.save(user);
-                return ResponseEntity.ok(BuildDto.builUserDto(user));
-            }
+        Role r = optionalRole.get(); // Obtén el rol
+
+        // Buscar el usuario en la base de datos
+        Optional<User> optionalUser = service.findById(id);
+        if (!optionalUser.isPresent()) {
             throw new UserNotFoundException(MessageError.USER_NOT_FOUND.getValue());
         }
-        throw new RoleNotFoundException(MessageError.ROLE_NOT_FOUND.getValue());
+
+        User user = optionalUser.get(); // Obtén el usuario
+
+        // Verificar si el rol ya existe para el usuario
+        if (user.getRoles().contains(r)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El usuario ya tiene el rol: " + role);
+        }
+
+        // Añadir el nuevo rol al usuario
+        user.addRole(r);
+
+        // Guardar el usuario actualizado
+        service.save(user);
+
+        return ResponseEntity.ok(BuildDto.builUserDto(user));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','COORDI')")

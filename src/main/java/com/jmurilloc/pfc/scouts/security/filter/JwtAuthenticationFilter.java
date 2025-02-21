@@ -14,13 +14,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static com.jmurilloc.pfc.scouts.security.TokenJwtConfig.*;
 
@@ -39,52 +37,66 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String password = null;
 
         try {
-            user = new ObjectMapper().readValue(request.getInputStream(), User.class); //Aquí estoy creando un json
+            // Deserializar el JSON enviado en el cuerpo de la solicitud
+            user = new ObjectMapper().readValue(request.getInputStream(), User.class);
             username = user.getUsername();
             password = user.getPassword();
         } catch (IOException e) {
-            throw new AttemptAuthenticationException("Fallo en la atentificación.");
+            throw new AttemptAuthenticationException("Fallo en la autentificación.");
         }
 
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username,password);
+        // Aquí agregamos las autoridades. Si ya las tienes en tu UserDetails, no es necesario hacer esto explícitamente.
+        Collection<? extends GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+
+        // Crear el token de autenticación con nombre de usuario, contraseña y autoridades
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(username, password, authorities);
+
+        // Delegar la autenticación al AuthenticationManager
         return authenticationManager.authenticate(authenticationToken);
     }
-    //Este métdo es si tdo sale bien
+
+    // Este método es llamado si la autenticación es exitosa
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         String username = ((org.springframework.security.core.userdetails.User) authResult.getPrincipal()).getUsername();
-        Collection<? extends GrantedAuthority> roles =  authResult.getAuthorities();
+        Collection<? extends GrantedAuthority> roles = authResult.getAuthorities();
 
+        // Crear los claims para el JWT, agregando las autoridades (roles)
         Claims claims = Jwts.claims()
                 .add("authorities", new ObjectMapper().writeValueAsString(roles))
-                .add("username",username)
+                .add("username", username)
                 .build();
 
+        // Crear el JWT con los claims y la fecha de expiración
         String token = Jwts.builder()
                 .subject(username)
-                .claims(claims) //Esto es para pasarle los roles
-                .expiration(new Date(System.currentTimeMillis() + 3600000)) //la fecha actual más 1 hora, es lo que va a durar el token
-                .issuedAt(new Date()) //Fecha en la que se creeo el token
-                .signWith(SECRET_KEY)
+                .claims(claims)
+                .expiration(new Date(System.currentTimeMillis() + 3600000)) // Expiración en 1 hora
+                .issuedAt(new Date()) // Fecha de emisión
+                .signWith(SECRET_KEY) // Firmado con la clave secreta
                 .compact();
 
-        response.addHeader(HEADER_AUTHORIZATION, PREFIX_TOKEN + token); //Vienen de la clase TokenJwtConfig (Creada por mi)
+        // Agregar el token al encabezado de la respuesta
+        response.addHeader(HEADER_AUTHORIZATION, PREFIX_TOKEN + token);
 
+        // Preparar la respuesta con el token y un mensaje de éxito
         Map<String, String> body = new HashMap<>();
-        body.put("token",token);
-        body.put("username",username);
-        body.put("message","Hola " + username + " has iniciado sesión con exito");
+        body.put("token", token);
+        body.put("username", username);
+        body.put("message", "Hola " + username + ", has iniciado sesión con éxito");
 
         response.getWriter().write(new ObjectMapper().writeValueAsString(body));
-        response.setContentType(CONTENT_TYPE); //De la clase creada por mi con las constantes
+        response.setContentType(CONTENT_TYPE); // Tipo de contenido (definido en tu clase de constantes)
         response.setStatus(200);
     }
-    //Si falla la autentificación
+
+    // Este método se ejecuta si la autenticación falla
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         Map<String, String> body = new HashMap<>();
-        body.put("message","Error en la autenticacion. Username o password incorrectos!");
-        body.put("error",failed.getMessage());
+        body.put("message", "Error en la autenticación. Username o password incorrectos!");
+        body.put("error", failed.getMessage());
         response.getWriter().write(new ObjectMapper().writeValueAsString(body));
         response.setStatus(401);
         response.setContentType(CONTENT_TYPE);

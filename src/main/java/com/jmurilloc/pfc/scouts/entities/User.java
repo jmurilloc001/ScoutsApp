@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -40,7 +42,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"),
             uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id","role_id"})}
     )
-    private Set<Role> roles;
+    private List<Role> roles;
 
     @Transient
     private boolean admin;
@@ -51,7 +53,7 @@ public class User {
     }
 
     public User() {
-        roles = new HashSet<>();
+        roles = new ArrayList<>();
     }
 
     public User(String username, String password) {
@@ -92,11 +94,11 @@ public class User {
         this.enabled = enabled;
     }
 
-    public Set<Role> getRoles() {
+    public List<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(List<Role> roles) {
         this.roles = roles;
     }
     public void addRole(Role role){

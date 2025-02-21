@@ -2,16 +2,17 @@ package com.jmurilloc.pfc.scouts.entities.dto;
 
 import com.jmurilloc.pfc.scouts.entities.Role;
 
+import java.util.List;
 import java.util.Set;
 
 public class UserDto {
     private String username;
     private String name;
     private String lastname;
-    private Set<Role> roles;
+    private List<Role> roles;
     private boolean enabled;
 
-    public UserDto(String username, String name, String lastname, Set<Role> roles, boolean enabled) {
+    public UserDto(String username, String name, String lastname, List<Role> roles, boolean enabled) {
         this.username = username;
         this.name = name;
         this.lastname = lastname;
@@ -47,11 +48,11 @@ public class UserDto {
         this.lastname = lastname;
     }
 
-    public Set<Role> getRoles() {
+    public List<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(List<Role> roles) {
         this.roles = roles;
     }
 

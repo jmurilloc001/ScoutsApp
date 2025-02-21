@@ -2,14 +2,17 @@ package com.jmurilloc.pfc.scouts.services;
 
 import com.jmurilloc.pfc.scouts.entities.Role;
 import com.jmurilloc.pfc.scouts.entities.User;
+import com.jmurilloc.pfc.scouts.exceptions.RoleNotFoundException;
 import com.jmurilloc.pfc.scouts.repositories.RoleRepository;
 import com.jmurilloc.pfc.scouts.repositories.UserRepository;
+import com.jmurilloc.pfc.scouts.util.MessageError;
 import com.jmurilloc.pfc.scouts.util.RoleNames;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,14 +52,31 @@ public class UserServiceImpl implements UserService{
     @Transactional
     public User save(User user) {
 
-        Optional<Role> roleUser = roleRepository.findByName(RoleNames.USER.getValue());
+        Optional<Role> roleUserOptional = roleRepository.findByName(RoleNames.USER.getValue());
 
-        roleUser.ifPresent(role -> user.getRoles().add(role));
+        if (roleUserOptional.isEmpty()){
+            throw new RoleNotFoundException(MessageError.ROLE_NOT_FOUND.getValue());
+        }
+        Role roleUser = roleUserOptional.get();
+        if (!user.getRoles().contains(roleUser)){
+            List<Role> roles = new ArrayList<>();
+            roles.addAll(user.getRoles());
+            roles.add(roleUser);
+            user.setRoles(roles);
+        }
 
         if (user.isAdmin()){
-            Optional<Role> roleAdmin = roleRepository.findByName(RoleNames.ADMIN.getValue());
-
-            roleAdmin.ifPresent(role -> user.getRoles().add(role));
+            Optional<Role> roleAdminOptional = roleRepository.findByName(RoleNames.ADMIN.getValue());
+            if (roleAdminOptional.isEmpty()){
+                throw new RoleNotFoundException(MessageError.ROLE_NOT_FOUND.getValue());
+            }
+            Role roleAdmin = roleAdminOptional.get();
+            if (!user.getRoles().contains(roleAdmin)){
+                List<Role> roles = new ArrayList<>();
+                roles.addAll(user.getRoles());
+                roles.add(roleAdmin);
+                user.setRoles(roles);
+            }
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return repository.save(user);

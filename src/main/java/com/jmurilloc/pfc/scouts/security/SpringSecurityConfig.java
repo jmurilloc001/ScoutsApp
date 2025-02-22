@@ -2,6 +2,8 @@ package com.jmurilloc.pfc.scouts.security;
 
 import com.jmurilloc.pfc.scouts.security.filter.JwtAuthenticationFilter;
 import com.jmurilloc.pfc.scouts.security.filter.JwtValidationFilter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,6 +13,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +29,9 @@ import java.util.Arrays;
 public class SpringSecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
+
+    @Autowired
+    private UserDetailsService userService;
 
     public SpringSecurityConfig(AuthenticationConfiguration authenticationConfiguration) {
         this.authenticationConfiguration = authenticationConfiguration;
@@ -49,7 +55,7 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilter(new JwtAuthenticationFilter(authenticationManager()))  // Filtro JWT de autenticación
+                .addFilter(new JwtAuthenticationFilter(authenticationManager(),userService))  // Filtro JWT de autenticación
                 .addFilter(new JwtValidationFilter(authenticationManager())) // Filtro JWT de validación
                 .csrf(csrf -> csrf.disable()) // Desactivando CSRF, ya que estás usando JWT
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))

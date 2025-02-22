@@ -14,8 +14,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.io.IOException;
 import java.util.*;
@@ -25,13 +25,20 @@ import static com.jmurilloc.pfc.scouts.security.TokenJwtConfig.*;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private AuthenticationManager authenticationManager;
+    private final UserDetailsService userDetailsService; // Inyectamos el servicio de detalles de usuario
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, UserDetailsService userDetailsService) {
         this.authenticationManager = authenticationManager;
+        this.userDetailsService = userDetailsService; // Inyectar el UserDetailsService
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        if (request.getHeader("Authorization") != null) {
+            // La autenticación ya fue realizada, no intentar de nuevo
+            return super.attemptAuthentication(request, response);
+        }
+        // Proceder con la lógica normal si no hay un token de autorización
         User user = null;
         String username = null;
         String password = null;
@@ -45,16 +52,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             throw new AttemptAuthenticationException("Fallo en la autentificación.");
         }
 
-        // Aquí agregamos las autoridades. Si ya las tienes en tu UserDetails, no es necesario hacer esto explícitamente.
-        Collection<? extends GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
-
-        // Crear el token de autenticación con nombre de usuario, contraseña y autoridades
+        // Crear el token de autenticación
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(username, password, authorities);
+                new UsernamePasswordAuthenticationToken(username, password);
 
-        // Delegar la autenticación al AuthenticationManager
         return authenticationManager.authenticate(authenticationToken);
     }
+
 
     // Este método es llamado si la autenticación es exitosa
     @Override

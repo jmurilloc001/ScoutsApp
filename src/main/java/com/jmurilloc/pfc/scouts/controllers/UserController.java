@@ -22,6 +22,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.zip.DataFormatException;
 
 @CrossOrigin(origins = {"http://localhost:5173"})
 @RestController
@@ -186,6 +187,25 @@ public class UserController {
         if (optionalUser.isPresent()){
             User u = optionalUser.orElseThrow();
             u.setPassword(password);
+            service.save(u);
+
+            return BuildDto.builUserDto(u);
+        }
+        throw new UserNotFoundException(MessageError.USER_NOT_FOUND.getValue());
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @PatchMapping("/{id}/username")
+    public UserDto changeUsername(@PathVariable Long id, @RequestBody String username){
+
+        if (username.isBlank() || username.length() < 4 ||username.length() > 12){
+            throw new BadDataException(MessageError.BAD_DATA.getValue());
+        }
+        Optional<User> optionalUser = service.findById(id);
+
+        if (optionalUser.isPresent()){
+            User u = optionalUser.orElseThrow();
+            u.setUsername(username);
             service.save(u);
 
             return BuildDto.builUserDto(u);

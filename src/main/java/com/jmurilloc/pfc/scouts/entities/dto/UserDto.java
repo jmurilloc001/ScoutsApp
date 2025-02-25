@@ -1,6 +1,5 @@
 package com.jmurilloc.pfc.scouts.entities.dto;
 
-import com.jmurilloc.pfc.scouts.entities.Role;
 
 import java.util.List;
 

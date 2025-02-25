@@ -3,7 +3,6 @@ package com.jmurilloc.pfc.scouts.security;
 import com.jmurilloc.pfc.scouts.security.filter.JwtAuthenticationFilter;
 import com.jmurilloc.pfc.scouts.security.filter.JwtValidationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,9 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,16 +21,13 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 
 @Configuration
-@EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class SpringSecurityConfig {
 
-    private final AuthenticationConfiguration authenticationConfiguration;
+    private AuthenticationConfiguration authenticationConfiguration;
 
     @Autowired
-    private UserDetailsService userService;
-
-    public SpringSecurityConfig(AuthenticationConfiguration authenticationConfiguration) {
+    private void setAuthenticationConfiguration(AuthenticationConfiguration authenticationConfiguration) {
         this.authenticationConfiguration = authenticationConfiguration;
     }
 
@@ -51,11 +45,11 @@ public class SpringSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers(HttpMethod.GET, "/users", "/meetings", "/affiliates").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/users", "/meetings", "/affiliates", "/users/{username}/roles").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilter(new JwtAuthenticationFilter(authenticationManager(),userService))  // Filtro JWT de autenticación
+                .addFilter(new JwtAuthenticationFilter(authenticationManager()))  // Filtro JWT de autenticación
                 .addFilter(new JwtValidationFilter(authenticationManager())) // Filtro JWT de validación
                 .csrf(csrf -> csrf.disable()) // Desactivando CSRF, ya que estás usando JWT
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))

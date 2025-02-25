@@ -21,7 +21,7 @@ public class JpaUserDetailsService implements UserDetailsService {
     private UserRepository repository;
 
     @Autowired
-    public JpaUserDetailsService(UserRepository repository) {
+    private void setRepository(UserRepository repository) {
         this.repository = repository;
     }
 

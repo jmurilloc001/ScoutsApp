@@ -15,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.io.IOException;
 import java.util.*;
@@ -25,19 +24,13 @@ import static com.jmurilloc.pfc.scouts.security.TokenJwtConfig.*;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private AuthenticationManager authenticationManager;
-    private final UserDetailsService userDetailsService; // Inyectamos el servicio de detalles de usuario
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, UserDetailsService userDetailsService) {
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
-        this.userDetailsService = userDetailsService; // Inyectar el UserDetailsService
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        if (request.getHeader("Authorization") != null) {
-            // La autenticación ya fue realizada, no intentar de nuevo
-            return super.attemptAuthentication(request, response);
-        }
         // Proceder con la lógica normal si no hay un token de autorización
         User user = null;
         String username = null;

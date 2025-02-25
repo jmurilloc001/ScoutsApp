@@ -31,7 +31,7 @@ public class AffiliateController {
         this.service = service;
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','SCOUTER','COORDI')")
     @GetMapping
     public List<AffiliateDto> index(){
         List<Affiliate> affiliates = service.findAll();
@@ -43,7 +43,7 @@ public class AffiliateController {
         return affiliateDtos;
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/{id}")
     public AffiliateDto findById(@PathVariable Long id){
         Optional<Affiliate> optionalAffiliate = service.findById(id);
@@ -97,7 +97,7 @@ public class AffiliateController {
 
             service.save(a);
 
-            return ResponseEntity.ok(BuildDto.buildAffiliateDto(a));
+            return ResponseEntity.status(HttpStatus.CREATED).body(BuildDto.buildAffiliateDto(a));
         }
         throw new UserNotFoundException(MessageError.AFFILIATE_NOT_FOUND.getValue());
     }

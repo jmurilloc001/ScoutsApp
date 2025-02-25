@@ -58,4 +58,13 @@ public class HandlerExceptionController {
         error.setStatus(HttpStatus.BAD_REQUEST.value());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(error);
     }
+    @ExceptionHandler({UserWithoutRoleException.class})
+    public ResponseEntity<Error> userNotHaveRole(Exception e){
+        Error error = new Error();
+        error.setDate(new Date());
+        error.setErrorSpecification("El usuario no contiene el rol");
+        error.setMessage(e.getMessage());
+        error.setStatus(HttpStatus.BAD_REQUEST.value());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(error);
+    }
 }

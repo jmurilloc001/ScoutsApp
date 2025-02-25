@@ -16,6 +16,7 @@ public enum MessageError {
     BAD_DATA,
     VALIDATE_EXISTS_PRODUCT_BY_NAME,
     VALIDATE_EXISTS_USER_BY_USERNAME,
+    USER_NOT_HAVE_ROLE,
     ROLE_NOT_FOUND;
 
     private String value;
@@ -38,6 +39,7 @@ public enum MessageError {
             case VALIDATE_EXISTS_PRODUCT_BY_NAME -> value = "ya existe en la base de datos!, escoja otro nombre para el producto";
             case PRODUCT_NOT_DELETED -> value = "Error al borrar el producto";
             case VALIDATE_EXISTS_USER_BY_USERNAME -> value = "ya existe en la base de datos!, escoja otro username";
+            case USER_NOT_HAVE_ROLE -> value = "El usuario no tiene ese rol";
             default -> value = "Ningun error está implementado";
 
         }

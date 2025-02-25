@@ -3,14 +3,15 @@ package com.jmurilloc.pfc.scouts.entities.dto;
 import java.util.Date;
 
 public class AffiliateDto {
+    private Long id;
     private String name;
     private String lastname;
     private Date birthday;
     private Date inscripcionDate;
     private String seccion;
-    private String username;
 
-    public AffiliateDto(String name, String lastname, Date inscripcionDate, String seccion) {
+    public AffiliateDto(Long id,String name, String lastname, Date inscripcionDate, String seccion) {
+        this.id = id;
         this.name = name;
         this.lastname = lastname;
         this.inscripcionDate = inscripcionDate;
@@ -60,11 +61,11 @@ public class AffiliateDto {
         this.seccion = seccion;
     }
 
-    public String getUsername() {
-        return username;
+    public Long getId() {
+        return id;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setId(Long id) {
+        this.id = id;
     }
 }

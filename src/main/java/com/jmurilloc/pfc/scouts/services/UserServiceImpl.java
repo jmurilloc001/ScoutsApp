@@ -3,6 +3,7 @@ package com.jmurilloc.pfc.scouts.services;
 import com.jmurilloc.pfc.scouts.entities.Role;
 import com.jmurilloc.pfc.scouts.entities.User;
 import com.jmurilloc.pfc.scouts.exceptions.RoleNotFoundException;
+import com.jmurilloc.pfc.scouts.exceptions.UserWithoutRoleException;
 import com.jmurilloc.pfc.scouts.repositories.RoleRepository;
 import com.jmurilloc.pfc.scouts.repositories.UserRepository;
 import com.jmurilloc.pfc.scouts.util.MessageError;
@@ -51,34 +52,53 @@ public class UserServiceImpl implements UserService{
     @Override
     @Transactional
     public User save(User user) {
+        Optional<Role> optionalRoleUser = roleRepository.findByName("ROLE_USER");
+        List<Role> roles = new ArrayList<>();
 
-        Optional<Role> roleUserOptional = roleRepository.findByName(RoleNames.USER.getValue());
+        optionalRoleUser.ifPresent(roles::add);
 
-        if (roleUserOptional.isEmpty()){
-            throw new RoleNotFoundException(MessageError.ROLE_NOT_FOUND.getValue());
-        }
-        Role roleUser = roleUserOptional.get();
-        if (!user.getRoles().contains(roleUser)){
-            List<Role> roles = new ArrayList<>();
-            roles.addAll(user.getRoles());
-            roles.add(roleUser);
-            user.setRoles(roles);
+        if (user.isAdmin()) {
+            Optional<Role> optionalRoleAdmin = roleRepository.findByName("ROLE_ADMIN");
+            optionalRoleAdmin.ifPresent(roles::add);
         }
 
-        if (user.isAdmin()){
-            Optional<Role> roleAdminOptional = roleRepository.findByName(RoleNames.ADMIN.getValue());
-            if (roleAdminOptional.isEmpty()){
-                throw new RoleNotFoundException(MessageError.ROLE_NOT_FOUND.getValue());
-            }
-            Role roleAdmin = roleAdminOptional.get();
-            if (!user.getRoles().contains(roleAdmin)){
-                List<Role> roles = new ArrayList<>();
-                roles.addAll(user.getRoles());
-                roles.add(roleAdmin);
-                user.setRoles(roles);
-            }
-        }
+        user.setRoles(roles);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return repository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public User addRole(User user, Role role) {
+        Optional<Role> optionalRole = roleRepository.findByName(role.getName());
+        List<Role> roles = new ArrayList<>();
+
+        if (optionalRole.isEmpty()) {
+            throw new RoleNotFoundException("El rol no existe.");
+        }
+        roles.add(optionalRole.get());
+
+        roles.addAll(user.getRoles());
+        user.setRoles(roles);
+        return repository.save(user);
+    }
+
+    @Transactional
+    @Override
+    public User deleteRole(User user, Role role) {
+        Optional<Role> optionalRole = roleRepository.findByName(role.getName());
+
+        if (optionalRole.isEmpty()) {
+            throw new RoleNotFoundException("El rol no existe.");
+        }
+        List<Role> roles = new ArrayList<>(user.getRoles());
+        if (roles.contains(role)){
+            roles.remove(optionalRole.get());
+        }else {
+            throw new UserWithoutRoleException(MessageError.USER_NOT_HAVE_ROLE.getValue());
+        }
+
+        user.setRoles(roles);
         return repository.save(user);
     }
 
@@ -96,5 +116,10 @@ public class UserServiceImpl implements UserService{
         }
 
         repository.delete(user);
+    }
+
+    @Override
+    public Optional<User> findByUsername(String username) {
+        return repository.findByUsername(username);
     }
 }

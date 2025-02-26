@@ -15,4 +15,6 @@ public interface UserService {
     Optional<User> findByUsername(String username);
     User addRole(User user, Role role);
     User deleteRole(User user, Role role);
+    User changeUsernameById(String username,Long id);
+    User changePasswordById(String password,Long id);
 }

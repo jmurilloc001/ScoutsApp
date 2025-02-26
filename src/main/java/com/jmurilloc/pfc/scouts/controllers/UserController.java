@@ -6,7 +6,6 @@ import com.jmurilloc.pfc.scouts.entities.User;
 import com.jmurilloc.pfc.scouts.entities.dto.RoleDto;
 import com.jmurilloc.pfc.scouts.entities.dto.UserDto;
 import com.jmurilloc.pfc.scouts.exceptions.*;
-import com.jmurilloc.pfc.scouts.security.SimpleGrantedAuthorityJsonCreator;
 import com.jmurilloc.pfc.scouts.services.AffiliateService;
 import com.jmurilloc.pfc.scouts.services.RoleService;
 import com.jmurilloc.pfc.scouts.services.UserService;
@@ -22,7 +21,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.zip.DataFormatException;
 
 @CrossOrigin(origins = {"http://localhost:5173"})
 @RestController
@@ -133,6 +131,80 @@ public class UserController {
         throw new UserNotFoundException(MessageError.USER_NOT_FOUND.getValue());
     }
 
+    @PreAuthorize("hasRole('USER')")
+    @PatchMapping("/{id}/password")
+    public ResponseEntity<UserDto> changePassword(@PathVariable Long id, @RequestBody Map<String,String> passwordMap){
+
+        String password = passwordMap.get("password");
+        if (password == null) {
+            throw new BadDataException(MessageError.BAD_FORMAT_JSON.getValue());
+        }
+
+        if (password.isBlank() || password.length() < 4 ||password.contains(" ")){
+            throw new BadDataException(MessageError.BAD_DATA.getValue());
+        }
+        User user = service.changePasswordById(password,id);
+        if (user == null){
+            throw new UserNotFoundException(MessageError.USER_NOT_FOUND.getValue());
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(BuildDto.builUserDto(user));
+
+
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @PatchMapping("/{id}/username")
+    public ResponseEntity<Object> changeUsername(@PathVariable Long id, @RequestBody Map<String,String > usernameMap){
+
+        String username = usernameMap.get("username");
+        if (username == null) {
+            throw new BadDataException(MessageError.BAD_FORMAT_JSON.getValue());
+        }
+
+        if (username.isBlank() || username.length() < 4 ||username.length() > 12){
+            throw new BadDataException(MessageError.BAD_DATA.getValue());
+        }
+        User user = service.changeUsernameById(username,id);
+
+        if (user == null){
+            throw new UserNotFoundException(MessageError.USER_NOT_FOUND.getValue());
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(BuildDto.builUserDto(user));
+
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN','COORDI')")
+    @PatchMapping("/{id}/role/{role}")
+    public ResponseEntity<Object> addRole(@PathVariable Long id, @PathVariable String role) {
+
+        role = "ROLE_" + role.toUpperCase().replace(" ", "");
+
+        // Buscar el rol en la base de datos
+        Optional<Role> optionalRole = roleService.findByName(role);
+        if (optionalRole.isEmpty()) {
+            throw new RoleNotFoundException(MessageError.ROLE_NOT_FOUND.getValue());
+        }
+
+        Role r = optionalRole.get(); // Obtén el rol
+
+        // Buscar el usuario en la base de datos
+        Optional<User> optionalUser = service.findById(id);
+        if (optionalUser.isEmpty()) {
+            throw new UserNotFoundException(MessageError.USER_NOT_FOUND.getValue());
+        }
+
+        User user = optionalUser.get(); // Obtén el usuario
+
+        // Verificar si el rol ya existe para el usuario
+        if (user.getRoles().contains(r)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El usuario ya tiene el rol: " + role);
+        }
+
+        service.addRole(user, r);
+
+        return ResponseEntity.ok(BuildDto.builUserDto(user));
+    }
     @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id){
@@ -176,73 +248,6 @@ public class UserController {
         }
 
         throw new UserNotFoundException(MessageError.USER_NOT_FOUND.getValue());
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN','COORDI','SCOUTER','USER')")
-    @PatchMapping("/{id}/password/{password}")
-    public UserDto changePassword(@PathVariable Long id, @PathVariable String password){
-
-        Optional<User> optionalUser = service.findById(id);
-
-        if (optionalUser.isPresent()){
-            User u = optionalUser.orElseThrow();
-            u.setPassword(password);
-            service.save(u);
-
-            return BuildDto.builUserDto(u);
-        }
-        throw new UserNotFoundException(MessageError.USER_NOT_FOUND.getValue());
-    }
-
-    @PreAuthorize("hasRole('USER')")
-    @PatchMapping("/{id}/username")
-    public UserDto changeUsername(@PathVariable Long id, @RequestBody String username){
-
-        if (username.isBlank() || username.length() < 4 ||username.length() > 12){
-            throw new BadDataException(MessageError.BAD_DATA.getValue());
-        }
-        Optional<User> optionalUser = service.findById(id);
-
-        if (optionalUser.isPresent()){
-            User u = optionalUser.orElseThrow();
-            u.setUsername(username);
-            service.save(u);
-
-            return BuildDto.builUserDto(u);
-        }
-        throw new UserNotFoundException(MessageError.USER_NOT_FOUND.getValue());
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN','COORDI')")
-    @PatchMapping("/{id}/role/{role}")
-    public ResponseEntity<Object> addRole(@PathVariable Long id, @PathVariable String role) {
-
-        role = "ROLE_" + role.toUpperCase().replace(" ", "");
-
-        // Buscar el rol en la base de datos
-        Optional<Role> optionalRole = roleService.findByName(role);
-        if (optionalRole.isEmpty()) {
-            throw new RoleNotFoundException(MessageError.ROLE_NOT_FOUND.getValue());
-        }
-
-        Role r = optionalRole.get(); // Obtén el rol
-
-        // Buscar el usuario en la base de datos
-        Optional<User> optionalUser = service.findById(id);
-        if (optionalUser.isEmpty()) {
-            throw new UserNotFoundException(MessageError.USER_NOT_FOUND.getValue());
-        }
-
-        User user = optionalUser.get(); // Obtén el usuario
-
-        // Verificar si el rol ya existe para el usuario
-        if (user.getRoles().contains(r)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El usuario ya tiene el rol: " + role);
-        }
-
-        service.addRole(user, r);
-
-        return ResponseEntity.ok(BuildDto.builUserDto(user));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','COORDI')")

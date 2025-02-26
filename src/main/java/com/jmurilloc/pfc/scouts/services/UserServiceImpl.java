@@ -7,7 +7,6 @@ import com.jmurilloc.pfc.scouts.exceptions.UserWithoutRoleException;
 import com.jmurilloc.pfc.scouts.repositories.RoleRepository;
 import com.jmurilloc.pfc.scouts.repositories.UserRepository;
 import com.jmurilloc.pfc.scouts.util.MessageError;
-import com.jmurilloc.pfc.scouts.util.RoleNames;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -67,6 +66,8 @@ public class UserServiceImpl implements UserService{
         return repository.save(user);
     }
 
+
+
     @Override
     @Transactional
     public User addRole(User user, Role role) {
@@ -99,6 +100,32 @@ public class UserServiceImpl implements UserService{
         }
 
         user.setRoles(roles);
+        return repository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public User changeUsernameById(String username, Long id) {
+        Optional<User> userOptional = repository.findById(id);
+        if (userOptional.isEmpty()){
+            return null;
+        }
+        User user = userOptional.orElseThrow();
+        user.setUsername(username);
+
+        return repository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public User changePasswordById(String password, Long id) {
+        Optional<User> userOptional = repository.findById(id);
+        if (userOptional.isEmpty()){
+            return null;
+        }
+        User user = userOptional.orElseThrow();
+        user.setPassword(passwordEncoder.encode(password));
+
         return repository.save(user);
     }
 

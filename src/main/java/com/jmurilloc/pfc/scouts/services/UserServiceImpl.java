@@ -66,8 +66,6 @@ public class UserServiceImpl implements UserService{
         return repository.save(user);
     }
 
-
-
     @Override
     @Transactional
     public User addRole(User user, Role role) {

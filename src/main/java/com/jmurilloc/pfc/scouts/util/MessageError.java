@@ -18,6 +18,7 @@ public enum MessageError {
     VALIDATE_EXISTS_USER_BY_USERNAME,
     USER_NOT_HAVE_ROLE,
     BAD_FORMAT_JSON,
+    ACCES_DENIED_USER,
     ROLE_NOT_FOUND;
 
     private String value;
@@ -42,7 +43,8 @@ public enum MessageError {
             case VALIDATE_EXISTS_USER_BY_USERNAME -> value = "ya existe en la base de datos!, escoja otro username";
             case BAD_FORMAT_JSON -> value = "Los campos del JSON, están mal escritos";
             case USER_NOT_HAVE_ROLE -> value = "El usuario no tiene ese rol";
-            default -> value = "Ningun error está implementado";
+            case ACCES_DENIED_USER -> value = "No eres el usuario";
+            default -> value = "Ningún error está implementado";
 
         }
     }

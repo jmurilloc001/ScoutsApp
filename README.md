@@ -56,6 +56,13 @@ En mi aplicación, todos tienen el rol de usuario, y además, pueden tener otros
 
 Para la creación de los tokens, he usado ***JWT*** JSON Web Tokens.
 
+En cuanto a algunos mecanismos que he usado para mejorar la seguridad es la siguiente:
+
+Cuento con un método para cambiar el username, y otro para cambiar el password. Pero, a estos métodos, debe poder acceder cualquier user con el ROLE_USER, pero no poder cambiar el username o el password, de otro user.
+Para eso, he hecho uso del objeto **Principal** que nos aporta ***Spring Security***. 
+
+Con ello, compruebo que o bien, contenga el rol de admin y, por lo tanto, puede hacer cualquier cosa, o que sea el username del usuario que se quiera modificar, el mismo que viene con el token.
+
 ## ROLES
 
 - ***ADMIN***
@@ -137,6 +144,3 @@ Por controladores:
   - PUT: /products/{id} -> ok
   - PATCH: /products/{id} -> ok
   - DELETE: /products/{id} -> COMPROBAR
-
-
-ERROR IMPORTANTE: UNA VEZ QUE SE ME AÑADEN O ELIMINAN ROLES, NO ME DEJA HACER LOGIN CON EL USUARIO

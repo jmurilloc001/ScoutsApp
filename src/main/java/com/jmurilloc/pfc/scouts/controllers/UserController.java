@@ -17,9 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.*;
 
 @CrossOrigin(origins = {"http://localhost:5173"})
@@ -133,7 +136,22 @@ public class UserController {
 
     @PreAuthorize("hasRole('USER')")
     @PatchMapping("/{id}/password")
-    public ResponseEntity<UserDto> changePassword(@PathVariable Long id, @RequestBody Map<String,String> passwordMap){
+    public ResponseEntity<UserDto> changePassword(@PathVariable Long id, @RequestBody Map<String,String> passwordMap, Principal principal){
+
+        // Obtener el usuario actual
+        Authentication authentication = (Authentication) principal;
+        String currentUsername = authentication.getName();
+
+        boolean hasAdminRole = comprobarRoleAdmin(authentication);
+
+        Optional<User> userOptional = service.findById(id);
+        if (userOptional.isEmpty()){
+            throw new UserNotFoundException(MessageError.USER_NOT_FOUND.getValue());
+        }
+
+        if (!currentUsername.equals(userOptional.get().getUsername()) && !hasAdminRole ){
+            throw new AccesDeniedException(MessageError.ACCES_DENIED_USER.getValue());
+        }
 
         String password = passwordMap.get("password");
         if (password == null) {
@@ -154,7 +172,7 @@ public class UserController {
 
     @PreAuthorize("hasRole('USER')")
     @PatchMapping("/{id}/username")
-    public ResponseEntity<Object> changeUsername(@PathVariable Long id, @RequestBody Map<String,String > usernameMap){
+    public ResponseEntity<Object> changeUsername(@PathVariable Long id, @RequestBody Map<String,String > usernameMap, Principal principal){
 
         String username = usernameMap.get("username");
         if (username == null) {
@@ -164,11 +182,27 @@ public class UserController {
         if (username.isBlank() || username.length() < 4 ||username.length() > 12){
             throw new BadDataException(MessageError.BAD_DATA.getValue());
         }
+
+        // Obtener el usuario actual
+        Authentication authentication = (Authentication) principal;
+        String currentUsername = authentication.getName();
+
+        boolean hasAdminRole = comprobarRoleAdmin(authentication);
+
+        Optional<User> userOptional = service.findById(id);
+        if (userOptional.isEmpty()){
+            throw new UserNotFoundException(MessageError.USER_NOT_FOUND.getValue());
+        }
+        if (!userOptional.get().getUsername().equals(currentUsername) && !hasAdminRole){
+            throw new AccesDeniedException(MessageError.ACCES_DENIED_USER.getValue());
+        }
+
         User user = service.changeUsernameById(username,id);
 
         if (user == null){
             throw new UserNotFoundException(MessageError.USER_NOT_FOUND.getValue());
         }
+
 
         return ResponseEntity.status(HttpStatus.CREATED).body(BuildDto.builUserDto(user));
 
@@ -269,5 +303,11 @@ public class UserController {
         User user = optionalUser.orElseThrow();
         service.deleteRole(user,r);
         return ResponseEntity.ok(BuildDto.builUserDto(user));
+    }
+    private boolean comprobarRoleAdmin(Authentication authentication){
+        // Obtener los roles del usuario actual
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        return authorities.stream()
+                .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
     }
 }

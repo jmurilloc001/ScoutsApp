@@ -67,4 +67,13 @@ public class HandlerExceptionController {
         error.setStatus(HttpStatus.BAD_REQUEST.value());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(error);
     }
+    @ExceptionHandler({AccesDeniedException.class})
+    public ResponseEntity<Error> accesDenied(Exception e){
+        Error error = new Error();
+        error.setDate(new Date());
+        error.setErrorSpecification("No tienes permisos para hacer esta operación");
+        error.setMessage(e.getMessage());
+        error.setStatus(HttpStatus.UNAUTHORIZED.value());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value()).body(error);
+    }
 }

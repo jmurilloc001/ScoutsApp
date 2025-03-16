@@ -11,9 +11,11 @@ public interface ProductService {
     List<Product> productsWithPriceGreaterThan(float amount);
     List<Product> productsWithPriceLessThan(float amount);
     List<Product> productsWithLastPurcharseAfter(Date date);
+    List<Product> productsWithLastPurcharseBefore(Date date);
     List<Product> listAllProducts();
     Product saveProduct(Product product);
     void deleteProduct(Long id);
     Optional<Product> findById(Long id);
     boolean existsByName(String name);
+
 }

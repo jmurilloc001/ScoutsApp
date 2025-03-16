@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-
+@CrossOrigin(origins = {"http://localhost:5173"})
 @RestController
 @RequestMapping("/products")
 public class ProductController {
@@ -85,7 +85,13 @@ public class ProductController {
         return products;
     }
 
-    //TODO Me falta hacer lo mismo, pero para BEFORE, pero quiero esperar a como me da la fecha el front
+    @PreAuthorize("hasAnyRole('ADMIN','COORDI','SCOUTER')")
+    @GetMapping("/date-before")
+    public List<Product> productsWhoseDateBefore(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date){ //localhost:8080/products/date-after?date=2010-01-01
+        List<Product> products = service.productsWithLastPurcharseBefore(date);
+        checkEmptyListOfProducts(products);
+        return products;
+    }
 
     @PreAuthorize("hasAnyRole('ADMIN','COORDI','SCOUTER')")
     @GetMapping
@@ -130,8 +136,6 @@ public class ProductController {
     @PreAuthorize("hasAnyRole('ADMIN','COORDI','SCOUTER')")
     @PatchMapping("/{id}")
     public ResponseEntity<Object> updateSomeFields(@Valid @RequestBody Product product, BindingResult result, @PathVariable Long id){
-
-        //TODO PREGUNTAR PARA VER SI SE PUEDE MEJORAR
 
         BindingResult newResult = UtilValidation.validateWithoutError(MessageError.VALIDATE_EXISTS_PRODUCT_BY_NAME.getValue(), result);
         if (newResult != null){

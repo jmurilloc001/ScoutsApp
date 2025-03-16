@@ -22,18 +22,21 @@ public class Meeting {
             name = "educando_metting",
             joinColumns = @JoinColumn(name = "meeting_id"), inverseJoinColumns = @JoinColumn(name = "educando_id")
     )
-    private Set<Affiliate> educandos = new HashSet<>();
+    private Set<Affiliate> educandos;
 
     public Meeting() {
+        educandos = new HashSet<>();
     }
 
     public Meeting(Long id, Date date, Set<Affiliate> educandos) {
+        this();
         this.id = id;
         this.dateMeeting = date;
         this.educandos = educandos;
     }
 
     public Meeting(Date date, Set<Affiliate> educandos) {
+        this();
         this.dateMeeting = date;
         this.educandos = educandos;
     }
@@ -58,19 +61,6 @@ public class Meeting {
     public Set<Affiliate> getEducandos() {
         return educandos;
     }
-//    public Map<String, Map<String,Object>> getReuniones() { //Hago este get, porque si no, estaría tdo el rato llamandose de uno a otro
-//        Map<String,Map<String,Object>> json = new HashMap<>();
-//        for (Meeting reunione : reuniones) {
-//            Map<String,Object> reunion = new HashMap<>();
-//
-//            reunion.put("Id",reunione.getId());
-//            reunion.put("Date",reunione.getDateMeeting());
-//            reunion.put("Número educandos",reunione.getEducandos().size());
-//
-//            json.put("Reunion "+ reunione.getId(),reunion);
-//        }
-//        return json;
-//    }
 
     public void setEducandos(Set<Affiliate> educandos) {
         this.educandos = educandos;

@@ -100,7 +100,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(user));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','COORDI')")
+    @PreAuthorize("hasRole('USER')")
     @PatchMapping("/{userid}/affiliates/{affiliateid}")
     public ResponseEntity<Object> relationUserWithAffiliate(
             @PathVariable Long userid,
@@ -117,19 +117,17 @@ public class UserController {
 
             Optional<Affiliate> affiliateOptional = affiliateService.findById(affiliateid);
 
+            Affiliate affiliate;
             if (affiliateOptional.isPresent()){
-                Affiliate affiliate = affiliateOptional.orElseThrow();
+                affiliate = affiliateOptional.orElseThrow();
                 if (affiliate.getUser() != null){
                     throw new AffiliateWithUserException(MessageError.AFFILIATE_WITH_USER.getValue());
                 }
-                user.setAffiliate(affiliate);
             }else {
                 throw new AffiliateNotFoundException(MessageError.AFFILIATE_NOT_FOUND.getValue());
             }
 
-            service.save(user);
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(BuildDto.builUserDto(user));
+            return ResponseEntity.status(HttpStatus.CREATED).body(BuildDto.builUserDto( service.putAffiliate(user,affiliate) ));
         }
         throw new UserNotFoundException(MessageError.USER_NOT_FOUND.getValue());
     }
@@ -149,7 +147,9 @@ public class UserController {
             throw new UserNotFoundException(MessageError.USER_NOT_FOUND.getValue());
         }
 
-        if (!currentUsername.equals(userOptional.get().getUsername()) && !hasAdminRole ){
+        User user = userOptional.orElseThrow();
+
+        if (!currentUsername.equals(user.getUsername()) && !hasAdminRole ){
             throw new AccesDeniedException(MessageError.ACCES_DENIED_USER.getValue());
         }
 
@@ -161,13 +161,9 @@ public class UserController {
         if (password.isBlank() || password.length() < 4 ||password.contains(" ")){
             throw new BadDataException(MessageError.BAD_DATA.getValue());
         }
-        User user = service.changePasswordById(password,id);
-        if (user == null){
-            throw new UserNotFoundException(MessageError.USER_NOT_FOUND.getValue());
-        }
+        service.changePasswordById(password,user);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(BuildDto.builUserDto(user));
-
-
     }
 
     @PreAuthorize("hasRole('USER')")
@@ -193,16 +189,13 @@ public class UserController {
         if (userOptional.isEmpty()){
             throw new UserNotFoundException(MessageError.USER_NOT_FOUND.getValue());
         }
-        if (!userOptional.get().getUsername().equals(currentUsername) && !hasAdminRole){
+
+        User user = userOptional.orElseThrow();
+        if (!user.getUsername().equals(currentUsername) && !hasAdminRole){
             throw new AccesDeniedException(MessageError.ACCES_DENIED_USER.getValue());
         }
 
-        User user = service.changeUsernameById(username,id);
-
-        if (user == null){
-            throw new UserNotFoundException(MessageError.USER_NOT_FOUND.getValue());
-        }
-
+        service.changeUsernameById(username,user);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(BuildDto.builUserDto(user));
 
@@ -212,7 +205,9 @@ public class UserController {
     @PatchMapping("/{id}/role/{role}")
     public ResponseEntity<Object> addRole(@PathVariable Long id, @PathVariable String role) {
 
-        role = "ROLE_" + role.toUpperCase().replace(" ", "");
+        if (!role.contains("ROLE")){
+            role = "ROLE_" + role.toUpperCase().replace(" ", "");
+        }
 
         // Buscar el rol en la base de datos
         Optional<Role> optionalRole = roleService.findByName(role);
@@ -237,8 +232,41 @@ public class UserController {
 
         service.addRole(user, r);
 
-        return ResponseEntity.ok(BuildDto.builUserDto(user));
+        return ResponseEntity.status(HttpStatus.CREATED).body(BuildDto.builUserDto(user));
     }
+
+    @PreAuthorize("hasAnyRole('ADMIN','COORDI')")
+    @DeleteMapping("/{id}/role/{role}")
+    public ResponseEntity<Object> deleteRole(@PathVariable Long id, @PathVariable String role){
+
+        if (!role.contains("ROLE")){
+            role = "ROLE_" + role.toUpperCase().replace(" ", "");
+        }
+
+        // Buscar el rol en la base de datos
+        Optional<Role> optionalRole = roleService.findByName(role);
+        if (optionalRole.isEmpty()) {
+            throw new RoleNotFoundException(MessageError.ROLE_NOT_FOUND.getValue());
+        }
+
+        Role r = optionalRole.get(); // Obtén el rol
+
+        // Buscar el usuario en la base de datos
+        Optional<User> optionalUser = service.findById(id);
+        if (optionalUser.isEmpty()) {
+            throw new UserNotFoundException(MessageError.USER_NOT_FOUND.getValue());
+        }
+
+        User user = optionalUser.get(); // Obtén el usuario
+
+        // Verificar si el rol ya existe para el usuario
+        if (user.getRoles().contains(r)) {
+            service.deleteRole(user, r);
+            return ResponseEntity.status(HttpStatus.CREATED).body(BuildDto.builUserDto(user));
+        }
+        throw new UserWithoutRoleException(MessageError.USER_NOT_HAVE_ROLE.getValue());
+    }
+
     @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id){
@@ -284,26 +312,6 @@ public class UserController {
         throw new UserNotFoundException(MessageError.USER_NOT_FOUND.getValue());
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','COORDI')")
-    @DeleteMapping("/{id}/role/{role}")
-    public ResponseEntity<Object> deleteRole(@PathVariable Long id, @PathVariable String role){
-
-        role = "ROLE_" + role.toUpperCase().replace(" ", "");
-
-        Optional<Role> optionalRole = roleService.findByName(role);
-        if (optionalRole.isEmpty()){
-            throw new RoleNotFoundException(MessageError.ROLE_NOT_FOUND.getValue());
-        }
-        Role r = optionalRole.orElseThrow();
-
-        Optional<User> optionalUser = service.findById(id);
-        if (optionalUser.isEmpty()){
-            throw new UserNotFoundException(MessageError.USER_NOT_FOUND.getValue());
-        }
-        User user = optionalUser.orElseThrow();
-        service.deleteRole(user,r);
-        return ResponseEntity.ok(BuildDto.builUserDto(user));
-    }
     private boolean comprobarRoleAdmin(Authentication authentication){
         // Obtener los roles del usuario actual
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();

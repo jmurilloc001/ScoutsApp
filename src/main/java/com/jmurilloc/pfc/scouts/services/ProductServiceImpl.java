@@ -39,6 +39,12 @@ public class ProductServiceImpl implements ProductService{
         return productRepository.findByLastpurchaseAfter(date);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<Product> productsWithLastPurcharseBefore(Date date) {
+        return productRepository.findByLastpurchaseBefore(date);
+    }
+
     @Transactional(readOnly = true)
     @Override
     public List<Product> listAllProducts() {

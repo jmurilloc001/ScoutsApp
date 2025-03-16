@@ -13,3 +13,5 @@ INSERT INTO affiliates (name,lastname,birthday,inscripcion_date,seccion) VALUES(
 
 INSERT INTO roles (name) VALUES('ROLE_ADMIN');
 INSERT INTO roles (name) VALUES('ROLE_USER');
+
+INSERT INTO users (username,password,enabled) VALUES('admin','12345',true);

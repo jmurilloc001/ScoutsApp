@@ -13,7 +13,7 @@ import java.util.Date;
 @RestControllerAdvice
 public class HandlerExceptionController {
 
-    @ExceptionHandler({ProductNotFoundException.class, AffiliateNotFoundException.class, MeetingNotFound.class, MettingOrAffiliateNotFoundException.class, UserNotFoundException.class,RoleNotFoundException.class})
+    @ExceptionHandler({ProductNotFoundException.class, AffiliateNotFoundException.class, MeetingNotFound.class, MettingOrAffiliateNotFoundException.class, UserNotFoundException.class,RoleNotFoundException.class, CouncilNotFound.class})
     public ResponseEntity<Error> notFoundEx(Exception e){
         Error error = new Error();
         error.setDate(new Date());

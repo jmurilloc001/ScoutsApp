@@ -1,5 +1,6 @@
 package com.jmurilloc.pfc.scouts.services;
 
+import com.jmurilloc.pfc.scouts.entities.Affiliate;
 import com.jmurilloc.pfc.scouts.entities.Role;
 import com.jmurilloc.pfc.scouts.entities.User;
 import com.jmurilloc.pfc.scouts.exceptions.RoleNotFoundException;
@@ -103,12 +104,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     @Transactional
-    public User changeUsernameById(String username, Long id) {
-        Optional<User> userOptional = repository.findById(id);
-        if (userOptional.isEmpty()){
-            return null;
-        }
-        User user = userOptional.orElseThrow();
+    public User changeUsernameById(String username, User user) {
         user.setUsername(username);
 
         return repository.save(user);
@@ -116,14 +112,15 @@ public class UserServiceImpl implements UserService{
 
     @Override
     @Transactional
-    public User changePasswordById(String password, Long id) {
-        Optional<User> userOptional = repository.findById(id);
-        if (userOptional.isEmpty()){
-            return null;
-        }
-        User user = userOptional.orElseThrow();
+    public User changePasswordById(String password, User user) {
         user.setPassword(passwordEncoder.encode(password));
+        return repository.save(user);
+    }
 
+    @Override
+    @Transactional
+    public User putAffiliate(User user, Affiliate affiliate) {
+        user.setAffiliate(affiliate);
         return repository.save(user);
     }
 

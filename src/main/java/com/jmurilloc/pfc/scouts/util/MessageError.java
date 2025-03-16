@@ -19,6 +19,7 @@ public enum MessageError {
     USER_NOT_HAVE_ROLE,
     BAD_FORMAT_JSON,
     ACCES_DENIED_USER,
+    COUNCIL_NOT_FOUND,
     ROLE_NOT_FOUND;
 
     private String value;
@@ -44,6 +45,7 @@ public enum MessageError {
             case BAD_FORMAT_JSON -> value = "Los campos del JSON, están mal escritos";
             case USER_NOT_HAVE_ROLE -> value = "El usuario no tiene ese rol";
             case ACCES_DENIED_USER -> value = "No eres el usuario";
+            case COUNCIL_NOT_FOUND -> value = "No se ha encontrado el consejo";
             default -> value = "Ningún error está implementado";
 
         }

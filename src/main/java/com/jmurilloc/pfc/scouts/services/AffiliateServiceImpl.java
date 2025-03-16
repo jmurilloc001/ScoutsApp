@@ -46,4 +46,10 @@ public class AffiliateServiceImpl implements AffiliateService {
        repository.delete(affiliate);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Affiliate> findByName(String name) {
+        return repository.findByName(name);
+    }
+
 }

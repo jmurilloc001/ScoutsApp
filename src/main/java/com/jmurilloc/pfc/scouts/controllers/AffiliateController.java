@@ -55,7 +55,18 @@ public class AffiliateController {
         throw new AffiliateNotFoundException(MessageError.AFFILIATE_NOT_FOUND.getValue());
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/name/{name}")
+    public AffiliateDto findByName(@PathVariable String name){
+        Optional<Affiliate> optionalAffiliate = service.findByName(name);
+        if (optionalAffiliate.isPresent()){
+            Affiliate affiliate = optionalAffiliate.orElseThrow();
+
+            return BuildDto.buildAffiliateDto(affiliate);
+        }
+        throw new AffiliateNotFoundException(MessageError.AFFILIATE_NOT_FOUND.getValue());
+    }
+    @PreAuthorize("hasRole('USER')")
     @PostMapping
     public ResponseEntity<Object> create(@Valid @RequestBody Affiliate affiliate, BindingResult result){
         if (result.hasFieldErrors()){

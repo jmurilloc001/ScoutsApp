@@ -11,4 +11,5 @@ public interface AffiliateService {
     Affiliate save(Affiliate affiliate);
     List<Affiliate> findAll();
     void delete(Affiliate affiliate);
+    Optional<Affiliate> findByName(String name);
 }

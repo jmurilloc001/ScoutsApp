@@ -1,7 +1,9 @@
 package com.jmurilloc.pfc.scouts.services;
 
 import com.jmurilloc.pfc.scouts.entities.Council;
+import com.jmurilloc.pfc.scouts.exceptions.CouncilNotFoundException;
 import com.jmurilloc.pfc.scouts.repositories.CouncilRepositorory;
+import com.jmurilloc.pfc.scouts.util.MessageError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,13 +26,17 @@ public class CouncilServiceImpl implements CouncilService{
     @Transactional(readOnly = true)
     @Override
     public List<Council> listAll() {
-        return repositorory.findAll();
+        List<Council> allCouncils = repositorory.findAll();
+        if (allCouncils.isEmpty()) throw new CouncilNotFoundException(MessageError.COUNCIL_NOT_FOUND.getValue());
+        return allCouncils;
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Optional<Council> findById(Long id) {
-        return repositorory.findById(id);
+    public Council findById(Long id) {
+        Optional<Council> byId = repositorory.findById(id);
+        if (byId.isEmpty()) throw new CouncilNotFoundException(MessageError.COUNCIL_NOT_FOUND.getValue());
+        return byId.orElseThrow();
     }
 
     @Transactional(readOnly = true)
@@ -50,12 +56,18 @@ public class CouncilServiceImpl implements CouncilService{
         cal.set(Calendar.MILLISECOND, 999);
         Date endDate = cal.getTime();
 
-        return repositorory.findByFechaInicioBetween(startDate, endDate);
+        List<Council> byFechaInicioBetween = repositorory.findByFechaInicioBetween(startDate, endDate);
+        if (byFechaInicioBetween.isEmpty()) throw new CouncilNotFoundException(MessageError.COUNCIL_NOT_FOUND.getValue());
+        return byFechaInicioBetween;
     }
 
     @Transactional
     @Override
     public void deleteById(Long id) {
+        Optional<Council> council = repositorory.findById(id);
+        if (council.isEmpty()) {
+            throw new CouncilNotFoundException(MessageError.COUNCIL_NOT_FOUND.getValue());
+        }
         repositorory.deleteById(id);
     }
 

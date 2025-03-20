@@ -4,7 +4,7 @@ import com.jmurilloc.pfc.scouts.entities.Affiliate;
 import com.jmurilloc.pfc.scouts.entities.Meeting;
 
 import com.jmurilloc.pfc.scouts.exceptions.AffiliateInMeetingException;
-import com.jmurilloc.pfc.scouts.exceptions.MeetingNotFound;
+import com.jmurilloc.pfc.scouts.exceptions.MeetingNotFoundException;
 import com.jmurilloc.pfc.scouts.services.AffiliateService;
 import com.jmurilloc.pfc.scouts.services.MeetingService;
 import com.jmurilloc.pfc.scouts.util.MessageError;
@@ -36,7 +36,7 @@ public class MeetingController {
     public List<Meeting> index(){
         List<Meeting> meetings = service.findAll();
         if (meetings.isEmpty()){
-            throw new MeetingNotFound(MessageError.MEEATING_NOT_FOUND.getValue());
+            throw new MeetingNotFoundException(MessageError.MEEATING_NOT_FOUND.getValue());
         }
         return meetings;
     }
@@ -47,7 +47,7 @@ public class MeetingController {
         if (optionalMeeting.isPresent()){
             return optionalMeeting.get();
         }
-        throw new MeetingNotFound(MessageError.MEEATING_NOT_FOUND.getValue());
+        throw new MeetingNotFoundException(MessageError.MEEATING_NOT_FOUND.getValue());
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -77,6 +77,6 @@ public class MeetingController {
             return ResponseEntity.status(HttpStatus.CREATED).body("Educando añadido correctamente");
         }
 
-        throw new MeetingNotFound(MessageError.MEEATING_NOT_FOUND.getValue());
+        throw new MeetingNotFoundException(MessageError.MEEATING_NOT_FOUND.getValue());
     }
 }

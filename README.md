@@ -144,3 +144,9 @@ Por controladores:
   - PUT: /products/{id} -> ok
   - PATCH: /products/{id} -> ok
   - DELETE: /products/{id} -> COMPROBAR
+
+
+COSAS QUE HACER TAMBIÉN:
+
+APARTADO DE CREACIÓN DE POSTS, para poder solicitar ropa, material, o dar... (POSTS)
+APARTADO EN EL QUE DECIR QUÉ MATERIALES TE LLEVAS A UNA ACMAPADA Y CUALES VUELVEN, y veas si falta algo.

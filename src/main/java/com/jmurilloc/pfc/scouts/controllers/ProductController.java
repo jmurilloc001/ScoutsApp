@@ -1,15 +1,15 @@
 package com.jmurilloc.pfc.scouts.controllers;
 
 import com.jmurilloc.pfc.scouts.entities.Product;
-import com.jmurilloc.pfc.scouts.exceptions.ProductCouldntCreateException;
-import com.jmurilloc.pfc.scouts.exceptions.ProductNotDeleteException;
-import com.jmurilloc.pfc.scouts.exceptions.ProductNotFoundException;
 import com.jmurilloc.pfc.scouts.services.ProductService;
 import com.jmurilloc.pfc.scouts.util.BuildDate;
 import com.jmurilloc.pfc.scouts.util.MessageError;
 import com.jmurilloc.pfc.scouts.util.UtilValidation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,72 +35,86 @@ public class ProductController {
     @PreAuthorize("hasAnyRole('ADMIN','COORDI','SCOUTER')")
     @GetMapping(params = "price-min")
     public List<Product> productsWhosePriceGreaterThan(@RequestParam(name = "price-min") Float priceMin) {
-        List<Product> productos = service.productsWithPriceGreaterThan(priceMin);
-        checkEmptyListOfProducts(productos);
-
-        return productos;
-
+        return service.productsWithPriceGreaterThan(priceMin);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','COORDI','SCOUTER')")
     @GetMapping(params = "price-max")
     public List<Product> productsWhosePriceLessThan(@RequestParam(name = "price-max") Float priceMax) {
-        List<Product> productos = service.productsWithPriceLessThan(priceMax);
-        checkEmptyListOfProducts(productos);
-        return productos;
+        return service.productsWithPriceLessThan(priceMax);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','COORDI','SCOUTER')")
     @GetMapping(params = "date-after-year")
     public List<Product> productsWhoseDateAfter(@RequestParam(name = "date-after-year") int year){
         Date date = BuildDate.dateByYear(year); //Construyo la fecha
-        List<Product> products = service.productsWithLastPurcharseAfter(date);
-        checkEmptyListOfProducts(products);
-        return products;
+        return service.productsWithLastPurcharseAfter(date);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','COORDI','SCOUTER')")
     @GetMapping(params = {"date-after-year","date-after-month"})
     public List<Product> productsWhoseDateAfter(@RequestParam(name = "date-after-year") int year,@RequestParam(name = "date-after-month") int month){
         Date date = BuildDate.dateByYearAndMonth(year,month); //Construyo la fecha
-        List<Product> products = service.productsWithLastPurcharseAfter(date);
-        checkEmptyListOfProducts(products);
-        return products;
+        return service.productsWithLastPurcharseAfter(date);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','COORDI','SCOUTER')")
     @GetMapping(params = {"date-after-year","date-after-month","date-after-day"})
     public List<Product> productsWhoseDateAfter(@RequestParam(name = "date-after-year") int year,@RequestParam(name = "date-after-month") int month, @RequestParam(name = "date-after-day") int day){
         Date date = BuildDate.dateByYearAndMonthAndDay(year,month,day); //Construyo la fecha
-        List<Product> products = service.productsWithLastPurcharseAfter(date);
-        checkEmptyListOfProducts(products);
-        return products;
+        return service.productsWithLastPurcharseAfter(date);
+
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','COORDI','SCOUTER')")
     @GetMapping("/date-after")
     public List<Product> productsWhoseDateAfter(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date){ //localhost:8080/products/date-after?date=2010-01-01
-        List<Product> products = service.productsWithLastPurcharseAfter(date);
-        checkEmptyListOfProducts(products);
-        return products;
+        return service.productsWithLastPurcharseAfter(date);
     }
 
+    /**
+     * Retrieves a list of products whose last purchase date is before the specified date.
+     *
+     * @param date the date to compare
+     * @return a list of products with last purchase date before the specified date
+     */
     @PreAuthorize("hasAnyRole('ADMIN','COORDI','SCOUTER')")
     @GetMapping("/date-before")
     public List<Product> productsWhoseDateBefore(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date){ //localhost:8080/products/date-after?date=2010-01-01
-        List<Product> products = service.productsWithLastPurcharseBefore(date);
-        checkEmptyListOfProducts(products);
-        return products;
+        return service.productsWithLastPurcharseBefore(date);
     }
 
+    /**
+     * Retrieves a list of all products.
+     *
+     * @return a list of all products
+     */
     @PreAuthorize("hasAnyRole('ADMIN','COORDI','SCOUTER')")
     @GetMapping
     public List<Product> index(){
-        List<Product> products = service.listAllProducts();
-        checkEmptyListOfProducts(products);
-        return products;
+        return service.listAllProducts();
+    }
+    /**
+     * Retrieves a paginated list of products.
+     *
+     * @param page the page number to retrieve
+     * @param size the size of the page to retrieve
+     * @return a paginated list of products
+     */
+    @PreAuthorize("hasAnyRole('ADMIN','COORDI','SCOUTER')")
+    @GetMapping("/page")
+    public Page<Product> indexPage(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return service.listAllProducts(pageable);
     }
 
+    /**
+     * Saves a new product.
+     *
+     * @param product the product to save
+     * @param result the binding result
+     * @return a response entity with the saved product
+     */
     @PreAuthorize("hasAnyRole('ADMIN','COORDI','SCOUTER')")
     @PostMapping
     public ResponseEntity<Object> save(@Valid @RequestBody Product product,BindingResult result){
@@ -108,12 +122,17 @@ public class ProductController {
             return UtilValidation.validation(result);
         }
         Product p = service.saveProduct(product);
-        if (p == null){
-            throw new ProductCouldntCreateException(MessageError.CREATE_ERROR.getValue());
-        }
         return ResponseEntity.status(HttpStatus.CREATED).body(p);
     }
 
+    /**
+     * Updates an existing product.
+     *
+     * @param product the product to update
+     * @param result the binding result
+     * @param id the id of the product to update
+     * @return a response entity with the updated product
+     */
     @PreAuthorize("hasAnyRole('ADMIN','COORDI','SCOUTER')")
     @PutMapping("/{id}")
     public ResponseEntity<Object> update(@Valid @RequestBody Product product,BindingResult result,@PathVariable Long id){
@@ -123,16 +142,21 @@ public class ProductController {
             return UtilValidation.validation(newResult);
         }
 
+        service.findById(id); //Para hacer la comprobación de que existe el producto
 
-        Optional<Product> productOptional = service.findById(id);
-        if (productOptional.isPresent()){
-            product.setId(id);
-            service.saveProduct(product);
-            return ResponseEntity.status(HttpStatus.CREATED).body(product);
-        }
-        throw new ProductNotFoundException(MessageError.PRODUCT_NOT_FOUND.getValue());
+        product.setId(id);
+        service.saveProduct(product);
+        return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
 
+    /**
+     * Updates some fields of an existing product.
+     *
+     * @param product the product to update
+     * @param result the binding result
+     * @param id the id of the product to update
+     * @return a response entity with the updated product
+     */
     @PreAuthorize("hasAnyRole('ADMIN','COORDI','SCOUTER')")
     @PatchMapping("/{id}")
     public ResponseEntity<Object> updateSomeFields(@Valid @RequestBody Product product, BindingResult result, @PathVariable Long id){
@@ -142,39 +166,30 @@ public class ProductController {
             return UtilValidation.validation(newResult);
         }
 
-        Optional<Product> optionalProduct = service.findById(id);
-        if (optionalProduct.isPresent()){
-            Product p = optionalProduct.orElseThrow();
+        Product p = service.findById(id);
 
-            p.setName(product.getName());
-            p.setPrice(product.getPrice());
-            p.setStock(product.getStock());
-            if (product.getLastpurchase() != null) {p.setLastpurchase(product.getLastpurchase());}
+        p.setName(product.getName());
+        p.setPrice(product.getPrice());
+        p.setStock(product.getStock());
 
-            service.saveProduct(p);
+        if (product.getLastpurchase() != null) {p.setLastpurchase(product.getLastpurchase());}
 
-            return ResponseEntity.ok(p);
-        }
-        throw new ProductNotFoundException(MessageError.PRODUCT_NOT_FOUND.getValue());
+        service.saveProduct(p);
+
+        return ResponseEntity.ok(p);
     }
 
+    /**
+     * Deletes an existing product.
+     *
+     * @param id the id of the product to delete
+     * @return a response entity with a success message
+     */
     @PreAuthorize("hasAnyRole('ADMIN','COORDI','SCOUTER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id){
-        Optional<Product> product = service.findById(id);
-        product.ifPresentOrElse(product1 -> service.deleteProduct(product1.getId()),() -> {throw new ProductNotFoundException(MessageError.PRODUCT_NOT_FOUND.getValue());});
-
-        if (service.findById(id).isPresent()){
-            throw new ProductNotDeleteException(MessageError.PRODUCT_NOT_DELETED.getValue());
-        }
+        Product product = service.findById(id);
+        service.deleteProduct(product.getId());
         return ResponseEntity.ok("Producto eliminado con éxito");
     }
-
-    private void checkEmptyListOfProducts(List<Product> products){
-        if (products.isEmpty()){
-            throw new ProductNotFoundException(MessageError.PRODUCT_NOT_FOUND.getValue());
-        }
-    }
-
-
 }

@@ -21,6 +21,10 @@ public enum MessageError {
     ACCES_DENIED_USER,
     COUNCIL_NOT_FOUND,
     COUNCIL_NOT_CREATED,
+    POST_NEED_AFFILIATE,
+    POST_NEED_DESCRIPTION,
+    POST_NEED_TYPE,
+    POST_NOT_FOUND,
     ROLE_NOT_FOUND;
 
     private String value;
@@ -48,6 +52,10 @@ public enum MessageError {
             case ACCES_DENIED_USER -> value = "No eres el usuario";
             case COUNCIL_NOT_FOUND -> value = "No se ha encontrado el consejo";
             case COUNCIL_NOT_CREATED -> value = "No se ha podido crear el consejo";
+            case POST_NEED_AFFILIATE -> value = "El post necesita tener un afiliado";
+            case POST_NEED_DESCRIPTION -> value = "El post necesita tener una descripción";
+            case POST_NEED_TYPE -> value = "El post necesita tener un tipo";
+            case POST_NOT_FOUND -> value = "No se ha encontrado el post";
             default -> value = "Ningún error está implementado";
 
         }

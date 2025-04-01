@@ -24,7 +24,7 @@ public class HandlerExceptionController {
         error.setStatus(HttpStatus.NOT_FOUND.value());
         return ResponseEntity.status(HttpStatus.NOT_FOUND.value()).body(error);
     }
-    @ExceptionHandler({ProductCouldntCreateException.class,CouncilDtoException.class})
+    @ExceptionHandler({ProductCouldntCreateException.class,CouncilDtoException.class, PostsDtoException.class, AffiliateCouldntCreateException.class})
     public ResponseEntity<Error> createError(Exception e){
         Error error = new Error();
         error.setDate(new Date());
@@ -51,7 +51,7 @@ public class HandlerExceptionController {
         error.setStatus(HttpStatus.BAD_REQUEST.value());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(error);
     }
-    @ExceptionHandler({BadDataException.class, PostNotCouldntCreateException.class})
+    @ExceptionHandler({BadDataException.class, PostCouldntCreateException.class})
     public ResponseEntity<Error> badDataException(Exception e){
         Error error = new Error();
         error.setDate(new Date());

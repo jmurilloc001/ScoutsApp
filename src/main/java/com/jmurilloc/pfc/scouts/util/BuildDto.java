@@ -1,13 +1,7 @@
 package com.jmurilloc.pfc.scouts.util;
 
-import com.jmurilloc.pfc.scouts.entities.Affiliate;
-import com.jmurilloc.pfc.scouts.entities.Council;
-import com.jmurilloc.pfc.scouts.entities.Role;
-import com.jmurilloc.pfc.scouts.entities.User;
-import com.jmurilloc.pfc.scouts.entities.dto.AffiliateDto;
-import com.jmurilloc.pfc.scouts.entities.dto.CouncilDto;
-import com.jmurilloc.pfc.scouts.entities.dto.RoleDto;
-import com.jmurilloc.pfc.scouts.entities.dto.UserDto;
+import com.jmurilloc.pfc.scouts.entities.*;
+import com.jmurilloc.pfc.scouts.entities.dto.*;
 import com.jmurilloc.pfc.scouts.exceptions.CouncilDtoException;
 
 import java.util.ArrayList;
@@ -58,5 +52,17 @@ public abstract class BuildDto {
             throw new CouncilDtoException("No se ha podido crear el ConcilDto");
         }
         return councilDto;
+    }
+    public static PostDto buildPostDto (Post post){
+        PostDto postDto = new PostDto();
+        try {
+            postDto.setId(post.getId());
+            postDto.setDescription(post.getDescription());
+            postDto.setType(post.getType().name());
+            postDto.setAffiliateDto(BuildDto.buildAffiliateDto(post.getAffiliate()));
+        } catch (Exception e) {
+            throw new CouncilDtoException("No se ha podido crear el PostDto");
+        }
+        return postDto;
     }
 }

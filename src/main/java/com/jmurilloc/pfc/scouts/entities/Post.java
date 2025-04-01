@@ -11,7 +11,8 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "post_type")
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
     private PostType type;
 
     private String description;
@@ -51,4 +52,6 @@ public class Post {
     public void setAffiliate(Affiliate affiliate) {
         this.affiliate = affiliate;
     }
+
+
 }

@@ -1,14 +1,16 @@
 package com.jmurilloc.pfc.scouts.services;
 
 import com.jmurilloc.pfc.scouts.entities.Post;
+import com.jmurilloc.pfc.scouts.entities.dto.PostDto;
 
 import java.util.List;
 
 public interface PostService {
 
-    Post savePost(Post post);
-    Post deletePost(Long id);
-    Post findById(Long id);
-    List<Post> listAllPosts();
+    PostDto savePost(Post post);
+    PostDto deletePost(Long id);
+    PostDto findById(Long id);
+    List<PostDto> listAllPosts();
     List<String> getPostTypes();
+    PostDto updatePost(Post post);
 }

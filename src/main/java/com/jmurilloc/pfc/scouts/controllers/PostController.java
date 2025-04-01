@@ -4,6 +4,7 @@ import com.jmurilloc.pfc.scouts.entities.Post;
 import com.jmurilloc.pfc.scouts.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,21 +18,32 @@ public class PostController {
         this.service = service;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @GetMapping
     public ResponseEntity<Object> listAllPosts(){
         return ResponseEntity.ok(service.listAllPosts());
     }
+
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/{id}")
     public ResponseEntity<Object> findById(@PathVariable Long id){
         return ResponseEntity.ok(service.findById(id));
     }
+    @PreAuthorize("hasRole('USER')")
     @PostMapping
     public ResponseEntity<Object> createPost(@RequestBody Post post){
         return ResponseEntity.ok(service.savePost(post));
     }
+    @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deletePost(@PathVariable Long id){
         return ResponseEntity.ok(service.deletePost(id));
+    }
+    @PreAuthorize("hasRole('USER')")
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> updatePost(@PathVariable Long id, @RequestBody Post post){
+        post.setId(id);
+        return ResponseEntity.ok(service.updatePost(post));
     }
 
 }

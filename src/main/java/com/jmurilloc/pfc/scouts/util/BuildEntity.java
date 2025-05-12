@@ -32,6 +32,13 @@ public class BuildEntity {
             post.setDescription(postDto.getDescription());
             post.setType(PostType.valueOf(postDto.getType()));
             post.setAffiliate(buildAffiliate(postDto.getAffiliateDto()));
+            post.setTitle(postDto.getTitle());
+            if (postDto.getEmail() != null){
+                post.setEmail(postDto.getEmail());
+            }
+            if (postDto.getTlf() != null){
+                post.setTlf(postDto.getTlf());
+            }
         } catch (RuntimeException e) {
             throw new PostCouldntCreateException(MessageError.POST_NOT_CREATED.getValue());
         }

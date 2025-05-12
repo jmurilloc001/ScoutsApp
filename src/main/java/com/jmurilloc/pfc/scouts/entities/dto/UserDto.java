@@ -5,6 +5,7 @@ import java.util.List;
 
 public class UserDto {
     private Long id;
+    private Long affiliateId;
     private String username;
     private String name;
     private String lastname;
@@ -20,8 +21,19 @@ public class UserDto {
         this.enabled = enabled;
     }
 
+    public UserDto() {
+    }
+
     public UserDto(String username) {
         this.username = username;
+    }
+
+    public Long getAffiliateId() {
+        return affiliateId;
+    }
+
+    public void setAffiliateId(Long affiliateId) {
+        this.affiliateId = affiliateId;
     }
 
     public String getUsername() {

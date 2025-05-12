@@ -27,6 +27,7 @@ public enum MessageError {
     POST_NEED_TYPE,
     POST_NOT_FOUND,
     POST_NEED_ID,
+    POST_NEED_TITLE,
     POST_NOT_CREATED,
     ROLE_NOT_FOUND;
 
@@ -62,6 +63,7 @@ public enum MessageError {
             case POST_NOT_FOUND -> value = "No se ha encontrado el post";
             case POST_NEED_ID -> value = "El post necesita tener un id";
             case POST_NOT_CREATED -> value = "No se ha podido crear el post";
+            case POST_NEED_TITLE -> value = "El post necesita tener un título";
             default -> value = "Ningún error está implementado";
 
         }

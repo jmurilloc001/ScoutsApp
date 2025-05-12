@@ -81,6 +81,12 @@ public class UserController {
         }
         return BuildDto.builUserDto(optionalUser.orElseThrow());
     }
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/{username}/affiliateId")
+    public ResponseEntity<Long> getAffiliateIdByUsername(@PathVariable String username){
+        Long id = service.getIdAffiliateByUsername(username);
+        return ResponseEntity.ok().body(id);
+    }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping

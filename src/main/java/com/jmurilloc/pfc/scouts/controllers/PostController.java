@@ -3,6 +3,7 @@ package com.jmurilloc.pfc.scouts.controllers;
 import com.jmurilloc.pfc.scouts.entities.Post;
 import com.jmurilloc.pfc.scouts.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,7 @@ public class PostController {
     @PreAuthorize("hasRole('USER')")
     @PostMapping
     public ResponseEntity<Object> createPost(@RequestBody Post post){
-        return ResponseEntity.ok(service.savePost(post));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.savePost(post));
     }
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/{id}")

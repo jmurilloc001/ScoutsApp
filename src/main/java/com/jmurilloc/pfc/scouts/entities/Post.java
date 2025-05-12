@@ -17,9 +17,14 @@ public class Post {
 
     private String description;
 
+    private String title;
+
     @ManyToOne
     @JoinColumn(name = "affiliate_id", referencedColumnName = "id")
     private Affiliate affiliate;
+
+    private String email;
+    private Integer tlf;
 
     public Long getId() {
         return id;
@@ -53,5 +58,27 @@ public class Post {
         this.affiliate = affiliate;
     }
 
+    public String getTitle() {
+        return title;
+    }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Integer getTlf() {
+        return tlf;
+    }
+
+    public void setTlf(Integer tlf) {
+        this.tlf = tlf;
+    }
 }

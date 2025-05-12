@@ -30,6 +30,9 @@ public class PostServiceImpl implements PostService{
     @Override
     public PostDto savePost(Post post) {
         if (post.getAffiliate() == null){
+            if (post.getAffiliate().getId() <= 0){
+                throw new PostCouldntCreateException(MessageError.POST_NEED_AFFILIATE.getValue());
+            }
             throw new PostCouldntCreateException(MessageError.POST_NEED_AFFILIATE.getValue());
         }
         if (post.getDescription() == null || post.getDescription().isEmpty()){
@@ -37,6 +40,15 @@ public class PostServiceImpl implements PostService{
         }
         if (post.getType() == null) {
             throw new PostCouldntCreateException(MessageError.POST_NEED_TYPE.getValue());
+        }
+        if (post.getTitle() == null){
+            throw new PostCouldntCreateException(MessageError.POST_NEED_TITLE.getValue());
+        }
+        if (post.getEmail() == null || post.getEmail().isBlank()){
+            post.setEmail(null);
+        }
+        if (post.getTlf() == null || post.getTlf() <= 0){
+            post.setTlf(null);
         }
         return BuildDto.buildPostDto(repository.save(post));
     }
@@ -83,6 +95,7 @@ public class PostServiceImpl implements PostService{
             if (post.getDescription().isEmpty()) throw new BadDataException(MessageError.POST_NEED_DESCRIPTION.getValue());
             if (post.getType() == null) throw new BadDataException(MessageError.POST_NEED_TYPE.getValue());
             if (post.getAffiliate() == null) throw new BadDataException(MessageError.POST_NEED_AFFILIATE.getValue());
+            if (post.getTitle() == null) throw new BadDataException(MessageError.POST_NEED_TITLE.getValue());
             return BuildDto.buildPostDto(repository.save(post));
         }
         throw new PostCouldntCreateException(MessageError.POST_NEED_ID.getValue());

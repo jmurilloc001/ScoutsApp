@@ -5,6 +5,9 @@ public class PostDto {
     private String type;
     private String description;
     private AffiliateDto affiliateDto;
+    private String title;
+    private String email;
+    private Integer tlf;
 
     public Long getId() {
         return id;
@@ -36,5 +39,29 @@ public class PostDto {
 
     public void setAffiliateDto(AffiliateDto affiliateDto) {
         this.affiliateDto = affiliateDto;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Integer getTlf() {
+        return tlf;
+    }
+
+    public void setTlf(Integer tlf) {
+        this.tlf = tlf;
     }
 }

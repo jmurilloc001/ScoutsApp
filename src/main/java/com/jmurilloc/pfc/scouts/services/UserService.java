@@ -19,4 +19,5 @@ public interface UserService {
     User changeUsernameById(String username,User user);
     User changePasswordById(String password,User user);
     User putAffiliate(User user, Affiliate affiliate);
+    Long getIdAffiliateByUsername(String username);
 }

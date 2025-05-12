@@ -4,6 +4,7 @@ import com.jmurilloc.pfc.scouts.entities.Affiliate;
 import com.jmurilloc.pfc.scouts.entities.Role;
 import com.jmurilloc.pfc.scouts.entities.User;
 import com.jmurilloc.pfc.scouts.exceptions.RoleNotFoundException;
+import com.jmurilloc.pfc.scouts.exceptions.UserNotFoundException;
 import com.jmurilloc.pfc.scouts.exceptions.UserWithoutRoleException;
 import com.jmurilloc.pfc.scouts.repositories.RoleRepository;
 import com.jmurilloc.pfc.scouts.repositories.UserRepository;
@@ -122,6 +123,15 @@ public class UserServiceImpl implements UserService{
     public User putAffiliate(User user, Affiliate affiliate) {
         user.setAffiliate(affiliate);
         return repository.save(user);
+    }
+
+    @Override
+    public Long getIdAffiliateByUsername(String username) {
+        Optional<User> optionalUser = repository.findByUsername(username);
+        if (optionalUser.isEmpty()){
+            throw new UserNotFoundException(MessageError.USER_NOT_FOUND.getValue());
+        }
+        return optionalUser.get().getAffiliate().getId();
     }
 
     @Transactional(readOnly = true)

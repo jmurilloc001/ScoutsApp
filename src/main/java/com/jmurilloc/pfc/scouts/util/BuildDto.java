@@ -27,11 +27,13 @@ public abstract class BuildDto {
         if (user.getAffiliate() != null){
             dto.setName(user.getAffiliate().getName());
             dto.setLastname(user.getAffiliate().getLastname());
+            dto.setAffiliateId(user.getAffiliate().getId());
         }
         List<RoleDto> roleDtos = new ArrayList<>();
         user.getRoles().forEach(role -> roleDtos.add(BuildDto.buildRoleDto(role)));
         dto.setRoles(roleDtos);
         dto.setEnabled(user.isEnabled());
+
 
         return dto;
     }
@@ -60,6 +62,13 @@ public abstract class BuildDto {
             postDto.setDescription(post.getDescription());
             postDto.setType(post.getType().name());
             postDto.setAffiliateDto(BuildDto.buildAffiliateDto(post.getAffiliate()));
+            postDto.setTitle(post.getTitle());
+            if (post.getEmail() != null){
+                postDto.setEmail(post.getEmail());
+            }
+            if (post.getTlf() != null){
+                postDto.setTlf(post.getTlf());
+            }
         } catch (Exception e) {
             throw new CouncilDtoException("No se ha podido crear el PostDto");
         }

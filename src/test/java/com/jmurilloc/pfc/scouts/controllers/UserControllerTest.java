@@ -11,6 +11,7 @@ import com.jmurilloc.pfc.scouts.exceptions.UserWithAffiliateException;
 import com.jmurilloc.pfc.scouts.services.AffiliateService;
 import com.jmurilloc.pfc.scouts.services.RoleService;
 import com.jmurilloc.pfc.scouts.services.UserService;
+import com.jmurilloc.pfc.scouts.util.BuildDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -267,6 +268,43 @@ class UserControllerTest
         Mockito.when(roleService.findByName(roleName)).thenReturn(Optional.empty());
         
         assertThrows( RoleNotFoundException.class, () -> userController.deleteRole( userId, roleName ) );
+    }
+    @Test
+    void deleteTest(){
+        Long userId = 1L;
+        
+        User user = new User();
+        user.setId(userId);
+        
+        // Mockear la búsqueda del usuario antes de eliminar
+        Mockito.when(userService.findById(userId)).thenReturn(Optional.of(user)).thenReturn(Optional.empty());
+        
+        ResponseEntity<String> response = userController.delete(userId);
+        
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("User eliminado correctamente", response.getBody());
+        
+        verify(userService, times(1)).delete(user);
+    }
+    
+    @Test
+    void updateTest() {
+        Long userId = 1L;
+        
+        User user = new User();
+        user.setId(userId);
+        user.setUsername("updatedUser");
+        
+        User existingUser = new User();
+        existingUser.setId(userId);
+        
+        Mockito.when(userService.findById(userId)).thenReturn(Optional.of(existingUser));
+        Mockito.when(userService.save(any(User.class))).thenReturn(user);
+        
+        ResponseEntity<Object> response = userController.update(user, Mockito.mock(BindingResult.class), userId);
+        
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(userService).save(existingUser);
     }
     
 }

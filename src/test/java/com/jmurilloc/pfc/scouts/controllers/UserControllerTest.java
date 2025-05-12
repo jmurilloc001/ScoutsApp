@@ -3,15 +3,14 @@ package com.jmurilloc.pfc.scouts.controllers;
 import com.jmurilloc.pfc.scouts.entities.Affiliate;
 import com.jmurilloc.pfc.scouts.entities.Role;
 import com.jmurilloc.pfc.scouts.entities.User;
-import com.jmurilloc.pfc.scouts.entities.dto.UserDto;
 import com.jmurilloc.pfc.scouts.exceptions.AffiliateNotFoundException;
-import com.jmurilloc.pfc.scouts.exceptions.AffiliateWithUserException;
 import com.jmurilloc.pfc.scouts.exceptions.BadDataException;
+import com.jmurilloc.pfc.scouts.exceptions.RoleNotFoundException;
 import com.jmurilloc.pfc.scouts.exceptions.UserNotFoundException;
 import com.jmurilloc.pfc.scouts.exceptions.UserWithAffiliateException;
 import com.jmurilloc.pfc.scouts.services.AffiliateService;
+import com.jmurilloc.pfc.scouts.services.RoleService;
 import com.jmurilloc.pfc.scouts.services.UserService;
-import com.jmurilloc.pfc.scouts.util.BuildDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -45,6 +44,9 @@ class UserControllerTest
     
     @Mock
     private AffiliateService affiliateService;
+    
+    @Mock
+    private RoleService roleService;
     
     
     @Test
@@ -184,6 +186,87 @@ class UserControllerTest
         Map<String,String> usernameMap = Map.of( "username", newUsername );
         
         assertThrows( BadDataException.class, () -> userController.changeUsername( userId,usernameMap,principal ) );
+    }
+    
+    @Test
+    void addRoleTest() {
+        Long userId = 1L;
+        String roleName = "ROLE_TEST";
+        
+        Role role = new Role();
+        role.setName(roleName);
+        
+        User user = new User();
+        user.setId(userId);
+        user.setRoles(new ArrayList<>());
+        
+        Mockito.when(roleService.findByName(roleName)).thenReturn(Optional.of(role));
+        Mockito.when(userService.findById(userId)).thenReturn(Optional.of(user));
+        
+        ResponseEntity<Object> response = userController.addRole(userId, roleName);
+        
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        verify(userService,times( 1 )).addRole(user, role);
+    }
+    
+    @Test
+    void addRoleEmptyRoleErrorTest(){
+        Long userId = 1L;
+        String roleName = "ROLE_TEST";
+        
+        User user = new User();
+        user.setId(userId);
+        user.setRoles(new ArrayList<>());
+        
+        Mockito.when(roleService.findByName(roleName)).thenReturn(Optional.empty());
+        
+        assertThrows( RoleNotFoundException.class, () -> userController.addRole(userId, roleName) );
+    }
+    
+    @Test
+    void addRoleUserContainRoleErrorTest(){
+        Long userId = 1L;
+        String roleName = "ROLE_TEST";
+        
+        User user = new User();
+        user.setId(userId);
+        user.setRoles(Arrays.asList( new Role(roleName)));
+        
+        Mockito.when(roleService.findByName(roleName)).thenReturn(Optional.of(new Role(roleName)));
+        Mockito.when( userService.findById( 1L ) ).thenReturn( Optional.of( user ) );
+        assertEquals( HttpStatus.BAD_REQUEST, userController.addRole( userId, roleName ).getStatusCode() );
+    }
+    @Test
+    void deleteRoleTest() {
+        Long userId = 1L;
+        String roleName = "ROLE_TEST";
+        
+        Role role = new Role();
+        role.setName(roleName);
+        
+        User user = new User();
+        user.setId(userId);
+        user.setRoles(Arrays.asList(role));
+        
+        Mockito.when(roleService.findByName(roleName)).thenReturn(Optional.of(role));
+        Mockito.when(userService.findById(userId)).thenReturn(Optional.of(user));
+        
+        ResponseEntity<Object> response = userController.deleteRole(userId, roleName);
+        
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        verify(userService, times(1)).deleteRole(user, role);
+    }
+    @Test
+    void deleteRoleNotFoundRoleErrorTest() {
+        Long userId = 1L;
+        String roleName = "ROLE_TEST";
+        
+        Role role = new Role();
+        role.setName(roleName);
+        
+        Mockito.when(roleService.findByName(roleName)).thenReturn(Optional.empty());
+        
+        assertThrows( RoleNotFoundException.class, () -> userController.deleteRole( userId, roleName ) );
     }
     
 }

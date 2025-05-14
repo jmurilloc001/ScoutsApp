@@ -6,6 +6,7 @@ import com.jmurilloc.pfc.scouts.services.CouncilService;
 import com.jmurilloc.pfc.scouts.util.BuildDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -59,7 +60,7 @@ public class CouncilController {
 
         Council savedCouncil = service.save(council);
 
-        return ResponseEntity.ok(BuildDto.buildCouncilDto(savedCouncil));
+        return ResponseEntity.status( HttpStatus.CREATED ).body(BuildDto.buildCouncilDto(savedCouncil));
 
     }
 

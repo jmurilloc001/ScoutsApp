@@ -11,7 +11,6 @@ import com.jmurilloc.pfc.scouts.exceptions.UserWithAffiliateException;
 import com.jmurilloc.pfc.scouts.services.AffiliateService;
 import com.jmurilloc.pfc.scouts.services.RoleService;
 import com.jmurilloc.pfc.scouts.services.UserService;
-import com.jmurilloc.pfc.scouts.util.BuildDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

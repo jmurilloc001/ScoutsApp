@@ -121,8 +121,13 @@ public class ProductController {
         if (result.hasFieldErrors()){
             return UtilValidation.validation(result);
         }
-        Product p = service.saveProduct(product);
-        return ResponseEntity.status(HttpStatus.CREATED).body(p);
+        try
+        {
+            Product p = service.saveProduct(product);
+            return ResponseEntity.status(HttpStatus.CREATED).body(p);
+        }catch ( Exception e ){
+            return ResponseEntity.badRequest().body( MessageError.PRODUCT_NOT_SAVE.getValue() );
+        }
     }
 
     /**

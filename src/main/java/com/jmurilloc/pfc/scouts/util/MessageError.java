@@ -2,6 +2,7 @@ package com.jmurilloc.pfc.scouts.util;
 
 public enum MessageError {
     PRODUCT_NOT_FOUND,
+    PRODUCT_NOT_SAVE,
     CREATE_ERROR,
     MEEATING_AND_AFFILIATE_NOT_FOUND,
     MEEATING_NOT_FOUND,
@@ -36,6 +37,7 @@ public enum MessageError {
     MessageError(){
         switch (this){
             case PRODUCT_NOT_FOUND -> value = "Producto no encontrado";
+            case PRODUCT_NOT_SAVE -> value = "Error al guardar el producto";
             case CREATE_ERROR -> value = "Error al crear el entity";
             case MEEATING_AND_AFFILIATE_NOT_FOUND -> value = "No se ha encontrado la reunión o al afiliado";
             case MEEATING_NOT_FOUND -> value = "No se ha encontrado ninguna reunion";

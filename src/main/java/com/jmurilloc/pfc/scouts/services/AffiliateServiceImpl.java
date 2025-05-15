@@ -10,46 +10,61 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class AffiliateServiceImpl implements AffiliateService {
+public class AffiliateServiceImpl implements AffiliateService
+{
+    
     private AffiliatesRepository repository;
-
+    
+    
     @Autowired
-    public void setRepository(AffiliatesRepository repository) {
+    public void setRepository( AffiliatesRepository repository )
+    {
         this.repository = repository;
     }
-
-    @Transactional(readOnly = true)
+    
+    
+    @Transactional( readOnly = true )
     @Override
-    public Optional<Affiliate> findById(Long id) {
-        return repository.findById(id);
+    public Optional<Affiliate> findById( Long id )
+    {
+        return repository.findById( id );
     }
-
+    
+    
     @Transactional
     @Override
-    public Affiliate save(Affiliate affiliate) {
-        return repository.save(affiliate);
+    public Affiliate save( Affiliate affiliate )
+    {
+        return repository.save( affiliate );
     }
-
-    @Transactional(readOnly = true)
+    
+    
+    @Transactional( readOnly = true )
     @Override
-    public List<Affiliate> findAll() {
+    public List<Affiliate> findAll()
+    {
         return repository.findAll();
     }
-
+    
+    
     @Transactional
     @Override
-    public void delete(Affiliate affiliate) {
-        if (affiliate.getUser() != null){
-            affiliate.deleteUser(affiliate.getUser());
+    public void delete( Affiliate affiliate )
+    {
+        if( affiliate.getUser() != null )
+        {
+            affiliate.deleteUser( affiliate.getUser() );
         }
-
-       repository.delete(affiliate);
+        
+        repository.delete( affiliate );
     }
-
+    
+    
     @Override
-    @Transactional(readOnly = true)
-    public Optional<Affiliate> findByName(String name) {
-        return repository.findByName(name);
+    @Transactional( readOnly = true )
+    public Optional<Affiliate> findByName( String name )
+    {
+        return repository.findByName( name );
     }
-
+    
 }

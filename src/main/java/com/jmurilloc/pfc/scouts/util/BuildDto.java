@@ -1,77 +1,134 @@
 package com.jmurilloc.pfc.scouts.util;
 
-import com.jmurilloc.pfc.scouts.entities.*;
-import com.jmurilloc.pfc.scouts.entities.dto.*;
+import com.jmurilloc.pfc.scouts.entities.Affiliate;
+import com.jmurilloc.pfc.scouts.entities.Council;
+import com.jmurilloc.pfc.scouts.entities.New;
+import com.jmurilloc.pfc.scouts.entities.Post;
+import com.jmurilloc.pfc.scouts.entities.Role;
+import com.jmurilloc.pfc.scouts.entities.User;
+import com.jmurilloc.pfc.scouts.entities.dto.AffiliateDto;
+import com.jmurilloc.pfc.scouts.entities.dto.CouncilDto;
+import com.jmurilloc.pfc.scouts.entities.dto.NewDto;
+import com.jmurilloc.pfc.scouts.entities.dto.PostDto;
+import com.jmurilloc.pfc.scouts.entities.dto.RoleDto;
+import com.jmurilloc.pfc.scouts.entities.dto.UserDto;
 import com.jmurilloc.pfc.scouts.exceptions.CouncilDtoException;
+import com.jmurilloc.pfc.scouts.exceptions.NewDtoException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BuildDto {
-
-    private BuildDto(){
-
+public abstract class BuildDto
+{
+    
+    private BuildDto()
+    {
+    
     }
-    public static AffiliateDto buildAffiliateDto(Affiliate affiliate){
-        AffiliateDto affiliateDto = new AffiliateDto(affiliate.getId(), affiliate.getName(), affiliate.getLastname(),affiliate.getInscripcionDate(),affiliate.getSeccion());
-        affiliateDto.setBirthday(
-                (affiliate.getBirthday() != null) ? affiliate.getBirthday() : null
-        );
+    
+    
+    public static AffiliateDto buildDto( Affiliate affiliate )
+    {
+        AffiliateDto affiliateDto = new AffiliateDto( affiliate.getId(), affiliate.getName(), affiliate.getLastname(), affiliate.getInscripcionDate(), affiliate.getSeccion() );
+        affiliateDto.setBirthday( (affiliate.getBirthday() != null)?affiliate.getBirthday():null );
         return affiliateDto;
     }
-    public static UserDto builUserDto(User user){
-        UserDto dto = new UserDto(user.getUsername());
-
-        dto.setId(user.getId());
-
-        if (user.getAffiliate() != null){
-            dto.setName(user.getAffiliate().getName());
-            dto.setLastname(user.getAffiliate().getLastname());
-            dto.setAffiliateId(user.getAffiliate().getId());
+    
+    
+    public static UserDto builDto( User user )
+    {
+        UserDto dto = new UserDto( user.getUsername() );
+        
+        dto.setId( user.getId() );
+        
+        if( user.getAffiliate() != null )
+        {
+            dto.setName( user.getAffiliate().getName() );
+            dto.setLastname( user.getAffiliate().getLastname() );
+            dto.setAffiliateId( user.getAffiliate().getId() );
         }
         List<RoleDto> roleDtos = new ArrayList<>();
-        user.getRoles().forEach(role -> roleDtos.add(BuildDto.buildRoleDto(role)));
-        dto.setRoles(roleDtos);
-        dto.setEnabled(user.isEnabled());
-
-
+        user.getRoles().forEach( role -> roleDtos.add( BuildDto.buildDto( role ) ) );
+        dto.setRoles( roleDtos );
+        dto.setEnabled( user.isEnabled() );
+        
         return dto;
     }
-    public static RoleDto buildRoleDto(Role role){
+    
+    
+    public static RoleDto buildDto( Role role )
+    {
         RoleDto roleDto = new RoleDto();
-        if (role.getName() != null){
-            roleDto.setName(role.getName());
+        if( role.getName() != null )
+        {
+            roleDto.setName( role.getName() );
         }
         return roleDto;
     }
-    public static CouncilDto buildCouncilDto(Council council){
+    
+    
+    public static CouncilDto buildDto( Council council )
+    {
         CouncilDto councilDto = new CouncilDto();
-        try {
-            councilDto.setInitialDate(council.getFechaInicio());
-            councilDto.setEndDate(council.getFechaFin());
-            councilDto.setId(council.getId());
-        } catch (CouncilDtoException e) {
-            throw new CouncilDtoException("No se ha podido crear el ConcilDto");
+        try
+        {
+            councilDto.setInitialDate( council.getFechaInicio() );
+            councilDto.setEndDate( council.getFechaFin() );
+            councilDto.setId( council.getId() );
+        }
+        catch ( CouncilDtoException e )
+        {
+            throw new CouncilDtoException( "No se ha podido crear el ConcilDto" );
         }
         return councilDto;
     }
-    public static PostDto buildPostDto (Post post){
+    
+    
+    public static PostDto buildPostDto( Post post )
+    {
         PostDto postDto = new PostDto();
-        try {
-            postDto.setId(post.getId());
-            postDto.setDescription(post.getDescription());
-            postDto.setType(post.getType().name());
-            postDto.setAffiliateDto(BuildDto.buildAffiliateDto(post.getAffiliate()));
-            postDto.setTitle(post.getTitle());
-            if (post.getEmail() != null){
-                postDto.setEmail(post.getEmail());
+        try
+        {
+            postDto.setId( post.getId() );
+            postDto.setDescription( post.getDescription() );
+            postDto.setType( post.getType().name() );
+            postDto.setAffiliateDto( buildDto( post.getAffiliate() ) );
+            postDto.setTitle( post.getTitle() );
+            if( post.getEmail() != null )
+            {
+                postDto.setEmail( post.getEmail() );
             }
-            if (post.getTlf() != null){
-                postDto.setTlf(post.getTlf());
+            if( post.getTlf() != null )
+            {
+                postDto.setTlf( post.getTlf() );
             }
-        } catch (Exception e) {
-            throw new CouncilDtoException("No se ha podido crear el PostDto");
+        }
+        catch ( Exception e )
+        {
+            throw new CouncilDtoException( "No se ha podido crear el PostDto" );
         }
         return postDto;
+    }
+    
+    
+    public static NewDto buildDto( New newEntity )
+    {
+        NewDto newDto = new NewDto();
+        try
+        {
+            newDto.setId( newEntity.getId() );
+            newDto.setTitle( newEntity.getTitle() );
+            newDto.setUrlImage( newEntity.getUrlImage() );
+            newDto.setDescription( newEntity.getDescription() );
+            newDto.setDate( newEntity.getDate() );
+            newDto.setUpdatedAt( newEntity.getUpdatedAt() );
+            newDto.setCreatedAt( newEntity.getCreatedAt() );
+            
+            return newDto;
+        }
+        catch ( Exception e )
+        {
+            throw new NewDtoException( MessageError.NEWDTO_COULD_NOT_BE_CREATED.getValue() );
+        }
     }
 }

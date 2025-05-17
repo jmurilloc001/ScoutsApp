@@ -131,4 +131,23 @@ public abstract class BuildDto
             throw new NewDtoException( MessageError.NEWDTO_COULD_NOT_BE_CREATED.getValue() );
         }
     }
+    
+    
+    public static List<NewDto> buildListDto( List<New> newList )
+    {
+        try
+        {
+            List<NewDto> newDtoList = new ArrayList<>();
+            for( New newEntity : newList )
+            {
+                newDtoList.add( BuildDto.buildDto( newEntity ) );
+            }
+            return newDtoList;
+        }
+        catch ( Exception e )
+        {
+            throw new NewDtoException( MessageError.NEWDTO_COULD_NOT_BE_CREATED.getValue() );
+        }
+        
+    }
 }

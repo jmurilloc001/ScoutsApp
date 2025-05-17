@@ -41,6 +41,7 @@ public class NewServiceImpl implements NewService
             log.info( "New found: {}", newEntity.get() );
             return Optional.of( BuildDto.buildDto( newEntity.get() ) );
         }
+        log.info( "Not found New with id: {}", id );
         return Optional.empty();
     }
     
@@ -69,6 +70,26 @@ public class NewServiceImpl implements NewService
     @Override
     public Optional<NewDto> updateNew( Long id, New newEntity )
     {
+        log.info( "Updating new with id: {}", id );
+        Optional<New> entityOptional = newRepository.findById( id );
+        if( entityOptional.isEmpty() )
+        {
+            log.error( "New not found with id: {}", id );
+            return Optional.empty();
+        }
+        New entity = entityOptional.get();
+        entity.setTitle( newEntity.getTitle() );
+        entity.setUrlImage( newEntity.getUrlImage() );
+        entity.setDescription( newEntity.getDescription() );
+        entity.setDate( newEntity.getDate() );
+        
+        New updatedNew = newRepository.save( entity );
+        if( updatedNew.getId() != null )
+        {
+            log.info( "New updated with id : {}", updatedNew.getId() );
+            return Optional.of( BuildDto.buildDto( updatedNew ) );
+        }
+        log.info( "Error updating New with id: {}", id );
         return Optional.empty();
     }
     
@@ -77,6 +98,15 @@ public class NewServiceImpl implements NewService
     @Override
     public Optional<NewDto> deleteNew( Long id )
     {
+        Optional<New> entityOptional = newRepository.findById( id );
+        if( entityOptional.isPresent() )
+        {
+            log.info( "Deleting new with id: {}", id );
+            newRepository.deleteById( id );
+            log.info( "New deleted with id: {}", id );
+            return Optional.of( BuildDto.buildDto( entityOptional.get() ) );
+        }
+        log.error( "New not found with id: {}", id );
         return Optional.empty();
     }
     
@@ -85,7 +115,15 @@ public class NewServiceImpl implements NewService
     @Override
     public List<NewDto> getAllNews()
     {
-        return List.of();
+        log.info( "Getting all news" );
+        List<New> news = newRepository.findAll();
+        if( news.isEmpty() )
+        {
+            log.info( "No news found" );
+            return List.of();
+        }
+        log.info( "Found {} news", news.size() );
+        return BuildDto.buildListDto( news );
     }
     
     
@@ -93,6 +131,14 @@ public class NewServiceImpl implements NewService
     @Override
     public Page<NewDto> listAllNews( Pageable pageable )
     {
-        return null;
+        log.info( "Getting all news with pagination" );
+        Page<New> news = newRepository.findAll( pageable );
+        if( news.isEmpty() )
+        {
+            log.info( "No news found" );
+            return Page.empty();
+        }
+        log.info( "Found {} news", news.getTotalElements() );
+        return news.map( BuildDto::buildDto );
     }
 }

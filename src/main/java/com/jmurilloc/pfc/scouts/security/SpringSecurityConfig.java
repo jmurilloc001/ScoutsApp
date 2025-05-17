@@ -53,8 +53,9 @@ public class SpringSecurityConfig
     @Bean
     public SecurityFilterChain filterChain( HttpSecurity http ) throws Exception
     {
-        return http.authorizeHttpRequests( authz -> authz.requestMatchers( HttpMethod.GET, "/users", "/meetings", "/affiliates", "/users/{username}/roles", "/news/*" ).permitAll()
-                        .requestMatchers( HttpMethod.POST, "/users/register" ).permitAll().anyRequest().authenticated() )
+        return http.authorizeHttpRequests(
+                        authz -> authz.requestMatchers( HttpMethod.GET, "/users", "/meetings", "/affiliates", "/users/{username}/roles", "/news", "/news/{id}", "/news/paginated" ).permitAll()
+                                .requestMatchers( HttpMethod.POST, "/users/register" ).permitAll().anyRequest().authenticated() )
                 .addFilter( new JwtAuthenticationFilter( authenticationManager() ) )  // Filtro JWT de autenticación
                 .addFilter( new JwtValidationFilter( authenticationManager() ) ) // Filtro JWT de validación
                 .csrf( csrf -> csrf.disable() ) // Desactivando CSRF, ya que estás usando JWT

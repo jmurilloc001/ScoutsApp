@@ -8,6 +8,7 @@ import com.jmurilloc.pfc.scouts.exceptions.UserNotFoundException;
 import com.jmurilloc.pfc.scouts.exceptions.UserWithoutRoleException;
 import com.jmurilloc.pfc.scouts.repositories.RoleRepository;
 import com.jmurilloc.pfc.scouts.repositories.UserRepository;
+import com.jmurilloc.pfc.scouts.services.interfaces.UserService;
 import com.jmurilloc.pfc.scouts.util.MessageError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,139 +20,180 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserService{
-
+public class UserServiceImpl implements UserService
+{
+    
     private UserRepository repository;
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
-
+    
+    
     @Autowired
-    public void setRepository(UserRepository repository) {
+    public void setRepository( UserRepository repository )
+    {
         this.repository = repository;
     }
+    
+    
     @Autowired
-    public void setRoleRepository(RoleRepository roleRepository) {
+    public void setRoleRepository( RoleRepository roleRepository )
+    {
         this.roleRepository = roleRepository;
     }
+    
+    
     @Autowired
-    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+    public void setPasswordEncoder( PasswordEncoder passwordEncoder )
+    {
         this.passwordEncoder = passwordEncoder;
     }
-
+    
+    
     @Override
-    @Transactional(readOnly = true)
-    public List<User> findAll() {
+    @Transactional( readOnly = true )
+    public List<User> findAll()
+    {
         return repository.findAll();
     }
-
+    
+    
     @Override
-    @Transactional(readOnly = true)
-    public Optional<User> findById(Long id) {
-        return repository.findById(id);
+    @Transactional( readOnly = true )
+    public Optional<User> findById( Long id )
+    {
+        return repository.findById( id );
     }
-
+    
+    
     @Override
     @Transactional
-    public User save(User user) {
-        Optional<Role> optionalRoleUser = roleRepository.findByName("ROLE_USER");
+    public User save( User user )
+    {
+        Optional<Role> optionalRoleUser = roleRepository.findByName( "ROLE_USER" );
         List<Role> roles = new ArrayList<>();
-
-        optionalRoleUser.ifPresent(roles::add);
-
-        if (user.isAdmin()) {
-            Optional<Role> optionalRoleAdmin = roleRepository.findByName("ROLE_ADMIN");
-            optionalRoleAdmin.ifPresent(roles::add);
+        
+        optionalRoleUser.ifPresent( roles::add );
+        
+        if( user.isAdmin() )
+        {
+            Optional<Role> optionalRoleAdmin = roleRepository.findByName( "ROLE_ADMIN" );
+            optionalRoleAdmin.ifPresent( roles::add );
         }
-
-        user.setRoles(roles);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return repository.save(user);
+        
+        user.setRoles( roles );
+        user.setPassword( passwordEncoder.encode( user.getPassword() ) );
+        return repository.save( user );
     }
-
+    
+    
     @Override
     @Transactional
-    public User addRole(User user, Role role) {
-        Optional<Role> optionalRole = roleRepository.findByName(role.getName());
+    public User addRole( User user, Role role )
+    {
+        Optional<Role> optionalRole = roleRepository.findByName( role.getName() );
         List<Role> roles = new ArrayList<>();
-
-        if (optionalRole.isEmpty()) {
-            throw new RoleNotFoundException("El rol no existe.");
+        
+        if( optionalRole.isEmpty() )
+        {
+            throw new RoleNotFoundException( "El rol no existe." );
         }
-        roles.add(optionalRole.get());
-
-        roles.addAll(user.getRoles());
-        user.setRoles(roles);
-        return repository.save(user);
+        roles.add( optionalRole.get() );
+        
+        roles.addAll( user.getRoles() );
+        user.setRoles( roles );
+        return repository.save( user );
     }
-
+    
+    
     @Transactional
     @Override
-    public User deleteRole(User user, Role role) {
-        Optional<Role> optionalRole = roleRepository.findByName(role.getName());
-
-        if (optionalRole.isEmpty()) {
-            throw new RoleNotFoundException("El rol no existe.");
+    public User deleteRole( User user, Role role )
+    {
+        Optional<Role> optionalRole = roleRepository.findByName( role.getName() );
+        
+        if( optionalRole.isEmpty() )
+        {
+            throw new RoleNotFoundException( "El rol no existe." );
         }
-        List<Role> roles = new ArrayList<>(user.getRoles());
-        if (roles.contains(role)){
-            roles.remove(optionalRole.get());
-        }else {
-            throw new UserWithoutRoleException(MessageError.USER_NOT_HAVE_ROLE.getValue());
+        List<Role> roles = new ArrayList<>( user.getRoles() );
+        if( roles.contains( role ) )
+        {
+            roles.remove( optionalRole.get() );
         }
-
-        user.setRoles(roles);
-        return repository.save(user);
+        else
+        {
+            throw new UserWithoutRoleException( MessageError.USER_NOT_HAVE_ROLE.getValue() );
+        }
+        
+        user.setRoles( roles );
+        return repository.save( user );
     }
-
+    
+    
     @Override
     @Transactional
-    public User changeUsernameById(String username, User user) {
-        user.setUsername(username);
-
-        return repository.save(user);
+    public User changeUsernameById( String username, User user )
+    {
+        user.setUsername( username );
+        
+        return repository.save( user );
     }
-
+    
+    
     @Override
     @Transactional
-    public User changePasswordById(String password, User user) {
-        user.setPassword(passwordEncoder.encode(password));
-        return repository.save(user);
+    public User changePasswordById( String password, User user )
+    {
+        user.setPassword( passwordEncoder.encode( password ) );
+        return repository.save( user );
     }
-
+    
+    
     @Override
     @Transactional
-    public User putAffiliate(User user, Affiliate affiliate) {
-        user.setAffiliate(affiliate);
-        return repository.save(user);
+    public User putAffiliate( User user, Affiliate affiliate )
+    {
+        user.setAffiliate( affiliate );
+        return repository.save( user );
     }
-
+    
+    
     @Override
-    public Long getIdAffiliateByUsername(String username) {
-        Optional<User> optionalUser = repository.findByUsername(username);
-        if (optionalUser.isEmpty()){
-            throw new UserNotFoundException(MessageError.USER_NOT_FOUND.getValue());
+    public Long getIdAffiliateByUsername( String username )
+    {
+        Optional<User> optionalUser = repository.findByUsername( username );
+        if( optionalUser.isEmpty() )
+        {
+            throw new UserNotFoundException( MessageError.USER_NOT_FOUND.getValue() );
         }
         return optionalUser.get().getAffiliate().getId();
     }
-
-    @Transactional(readOnly = true)
+    
+    
+    @Transactional( readOnly = true )
     @Override
-    public boolean existsByUsername(String username) {
-        return repository.existsByUsername(username);
+    public boolean existsByUsername( String username )
+    {
+        return repository.existsByUsername( username );
     }
-
+    
+    
     @Transactional
     @Override
-    public void delete(User user) {
-        if (user.getAffiliate() != null){
-            user.deleteAffiliate(user.getAffiliate());
+    public void delete( User user )
+    {
+        if( user.getAffiliate() != null )
+        {
+            user.deleteAffiliate( user.getAffiliate() );
         }
-
-        repository.delete(user);
+        
+        repository.delete( user );
     }
-
+    
+    
     @Override
-    public Optional<User> findByUsername(String username) {
-        return repository.findByUsername(username);
+    public Optional<User> findByUsername( String username )
+    {
+        return repository.findByUsername( username );
     }
 }

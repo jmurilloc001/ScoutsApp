@@ -2,6 +2,7 @@ package com.jmurilloc.pfc.scouts.services;
 
 import com.jmurilloc.pfc.scouts.entities.Affiliate;
 import com.jmurilloc.pfc.scouts.repositories.AffiliatesRepository;
+import com.jmurilloc.pfc.scouts.services.interfaces.AffiliateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

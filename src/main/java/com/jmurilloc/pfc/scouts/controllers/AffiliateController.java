@@ -4,7 +4,7 @@ import com.jmurilloc.pfc.scouts.entities.Affiliate;
 import com.jmurilloc.pfc.scouts.entities.dto.AffiliateDto;
 import com.jmurilloc.pfc.scouts.exceptions.AffiliateNotFoundException;
 import com.jmurilloc.pfc.scouts.exceptions.UserNotFoundException;
-import com.jmurilloc.pfc.scouts.services.AffiliateService;
+import com.jmurilloc.pfc.scouts.services.interfaces.AffiliateService;
 import com.jmurilloc.pfc.scouts.util.BuildDto;
 import com.jmurilloc.pfc.scouts.util.MessageError;
 import com.jmurilloc.pfc.scouts.util.UtilValidation;

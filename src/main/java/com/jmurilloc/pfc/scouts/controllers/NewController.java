@@ -4,7 +4,7 @@ import com.jmurilloc.pfc.scouts.entities.New;
 import com.jmurilloc.pfc.scouts.entities.dto.NewDto;
 import com.jmurilloc.pfc.scouts.exceptions.NewNotCreateException;
 import com.jmurilloc.pfc.scouts.exceptions.NewNotFoundException;
-import com.jmurilloc.pfc.scouts.services.NewService;
+import com.jmurilloc.pfc.scouts.services.interfaces.NewService;
 import com.jmurilloc.pfc.scouts.util.MessageError;
 import com.jmurilloc.pfc.scouts.util.UtilValidation;
 import jakarta.validation.Valid;

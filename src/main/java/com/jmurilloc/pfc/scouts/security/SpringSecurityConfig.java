@@ -54,11 +54,11 @@ public class SpringSecurityConfig
     public SecurityFilterChain filterChain( HttpSecurity http ) throws Exception
     {
         return http.authorizeHttpRequests(
-                        authz -> authz.requestMatchers( HttpMethod.GET, "/users", "/meetings", "/affiliates", "/users/{username}/roles", "/news", "/news/{id}", "/news/paginated" ).permitAll()
+                        authz -> authz.requestMatchers( HttpMethod.GET, "/users", "/meetings", "/affiliates", "/users/{username}/roles", "/news", "/news/{id}", "/news/paginated", "/send-email" ).permitAll()
                                 .requestMatchers( HttpMethod.POST, "/users/register" ).permitAll().anyRequest().authenticated() )
                 .addFilter( new JwtAuthenticationFilter( authenticationManager() ) )  // Filtro JWT de autenticación
                 .addFilter( new JwtValidationFilter( authenticationManager() ) ) // Filtro JWT de validación
-                .csrf( csrf -> csrf.disable() ) // Desactivando CSRF, ya que estás usando JWT
+                .csrf( csrf -> csrf.disable() ) // Desactivando CSRF, ya que se usa JWT
                 .cors( cors -> cors.configurationSource( corsConfigurationSource() ) )
                 .sessionManagement( session -> session.sessionCreationPolicy( SessionCreationPolicy.STATELESS ) ) // No utilizar sesión HTTP, solo tokens
                 .build();

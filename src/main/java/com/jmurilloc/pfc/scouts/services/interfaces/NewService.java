@@ -1,4 +1,4 @@
-package com.jmurilloc.pfc.scouts.services;
+package com.jmurilloc.pfc.scouts.services.interfaces;
 
 import com.jmurilloc.pfc.scouts.entities.New;
 import com.jmurilloc.pfc.scouts.entities.dto.NewDto;

@@ -2,7 +2,7 @@ package com.jmurilloc.pfc.scouts.controllers;
 
 import com.jmurilloc.pfc.scouts.entities.Council;
 import com.jmurilloc.pfc.scouts.entities.dto.CouncilDto;
-import com.jmurilloc.pfc.scouts.services.CouncilService;
+import com.jmurilloc.pfc.scouts.services.interfaces.CouncilService;
 import com.jmurilloc.pfc.scouts.util.BuildDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;

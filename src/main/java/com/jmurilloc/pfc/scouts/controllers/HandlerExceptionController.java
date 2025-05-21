@@ -8,6 +8,7 @@ import com.jmurilloc.pfc.scouts.exceptions.AffiliateWithUserException;
 import com.jmurilloc.pfc.scouts.exceptions.BadDataException;
 import com.jmurilloc.pfc.scouts.exceptions.CouncilDtoException;
 import com.jmurilloc.pfc.scouts.exceptions.CouncilNotFoundException;
+import com.jmurilloc.pfc.scouts.exceptions.EmailError;
 import com.jmurilloc.pfc.scouts.exceptions.MeetingNotFoundException;
 import com.jmurilloc.pfc.scouts.exceptions.MettingOrAffiliateNotFoundException;
 import com.jmurilloc.pfc.scouts.exceptions.NewDtoException;
@@ -26,6 +27,7 @@ import com.jmurilloc.pfc.scouts.exceptions.UserWithoutRoleException;
 import com.jmurilloc.pfc.scouts.models.Error;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -142,5 +144,12 @@ public class HandlerExceptionController
     public ResponseEntity<String> handlerParametrerException( MissingServletRequestParameterException e )
     {
         return ResponseEntity.status( HttpStatus.BAD_REQUEST ).body( "No se ha podido crear el objeto. " + e.getMessage() );
+    }
+    
+    
+    @ExceptionHandler( EmailError.class )
+    public ResponseEntity<String> handlerMailException( MailException e )
+    {
+        return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR ).body( "No se ha podido enviar el correo. " + e.getMessage() );
     }
 }

@@ -2,7 +2,7 @@ package com.jmurilloc.pfc.scouts.controllers;
 
 import com.jmurilloc.pfc.scouts.entities.dto.NewDto;
 import com.jmurilloc.pfc.scouts.exceptions.NewNotFoundException;
-import com.jmurilloc.pfc.scouts.services.NewService;
+import com.jmurilloc.pfc.scouts.services.interfaces.NewService;
 import com.jmurilloc.pfc.scouts.util.MessageError;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

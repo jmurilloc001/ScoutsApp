@@ -3,6 +3,7 @@ package com.jmurilloc.pfc.scouts.services;
 import com.jmurilloc.pfc.scouts.entities.New;
 import com.jmurilloc.pfc.scouts.entities.dto.NewDto;
 import com.jmurilloc.pfc.scouts.repositories.NewRepository;
+import com.jmurilloc.pfc.scouts.services.interfaces.NewService;
 import com.jmurilloc.pfc.scouts.util.BuildDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

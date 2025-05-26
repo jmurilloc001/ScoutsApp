@@ -1,45 +1,19 @@
-package com.jmurilloc.pfc.scouts.entities;
-
-import com.jmurilloc.pfc.scouts.util.MaterialsConverter;
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+package com.jmurilloc.pfc.scouts.entities.dto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
 
-@Entity
-@Table( name = "historical_trips" )
-public class HistoricalTrip
+public class HistoricalTripDto
 {
     
-    @Id
-    @GeneratedValue( strategy = GenerationType.IDENTITY )
     private Long id;
-    
-    @Column( name = "trip_id", nullable = false )
     private Long tripId;
-    
-    @Column( nullable = false )
     private String title;
-    
-    @Column( name = "start_date", nullable = false )
     private LocalDate startDate;
-    
-    @Column( name = "end_date", nullable = false )
     private LocalDate endDate;
-    
-    @Column( nullable = false, columnDefinition = "JSONB" )
-    @Convert( converter = MaterialsConverter.class )
     private Map<String, Object> materials;
-    
-    @Column( name = "closed_at", nullable = false )
-    private LocalDateTime closedAt = LocalDateTime.now();
+    private LocalDateTime closedAt;
     
     
     public Long getId()

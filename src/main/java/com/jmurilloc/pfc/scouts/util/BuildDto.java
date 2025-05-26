@@ -5,15 +5,18 @@ import com.jmurilloc.pfc.scouts.entities.Council;
 import com.jmurilloc.pfc.scouts.entities.New;
 import com.jmurilloc.pfc.scouts.entities.Post;
 import com.jmurilloc.pfc.scouts.entities.Role;
+import com.jmurilloc.pfc.scouts.entities.Trip;
 import com.jmurilloc.pfc.scouts.entities.User;
 import com.jmurilloc.pfc.scouts.entities.dto.AffiliateDto;
 import com.jmurilloc.pfc.scouts.entities.dto.CouncilDto;
 import com.jmurilloc.pfc.scouts.entities.dto.NewDto;
 import com.jmurilloc.pfc.scouts.entities.dto.PostDto;
 import com.jmurilloc.pfc.scouts.entities.dto.RoleDto;
+import com.jmurilloc.pfc.scouts.entities.dto.TripDto;
 import com.jmurilloc.pfc.scouts.entities.dto.UserDto;
 import com.jmurilloc.pfc.scouts.exceptions.CouncilDtoException;
 import com.jmurilloc.pfc.scouts.exceptions.NewDtoException;
+import com.jmurilloc.pfc.scouts.exceptions.TripDtoException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -149,5 +152,24 @@ public abstract class BuildDto
             throw new NewDtoException( MessageError.NEWDTO_COULD_NOT_BE_CREATED.getValue() );
         }
         
+    }
+    
+    
+    public static TripDto buildDto( Trip trip )
+    {
+        try
+        {
+            TripDto tripDto = new TripDto();
+            tripDto.setId( trip.getId() );
+            tripDto.setTitle( trip.getTitle() );
+            tripDto.setStartDate( trip.getStartDate() );
+            tripDto.setEndDate( trip.getEndDate() );
+            tripDto.setProducts( trip.getProducts() );
+            return tripDto;
+        }
+        catch ( Exception e )
+        {
+            throw new TripDtoException( MessageError.NEWDTO_COULD_NOT_BE_CREATED.getValue() );
+        }
     }
 }

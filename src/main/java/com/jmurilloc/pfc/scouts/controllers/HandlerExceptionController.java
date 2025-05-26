@@ -9,6 +9,7 @@ import com.jmurilloc.pfc.scouts.exceptions.BadDataException;
 import com.jmurilloc.pfc.scouts.exceptions.CouncilDtoException;
 import com.jmurilloc.pfc.scouts.exceptions.CouncilNotFoundException;
 import com.jmurilloc.pfc.scouts.exceptions.EmailError;
+import com.jmurilloc.pfc.scouts.exceptions.InsuficientStockException;
 import com.jmurilloc.pfc.scouts.exceptions.MeetingNotFoundException;
 import com.jmurilloc.pfc.scouts.exceptions.MettingOrAffiliateNotFoundException;
 import com.jmurilloc.pfc.scouts.exceptions.NewDtoException;
@@ -21,6 +22,9 @@ import com.jmurilloc.pfc.scouts.exceptions.ProductCouldntCreateException;
 import com.jmurilloc.pfc.scouts.exceptions.ProductNotDeleteException;
 import com.jmurilloc.pfc.scouts.exceptions.ProductNotFoundException;
 import com.jmurilloc.pfc.scouts.exceptions.RoleNotFoundException;
+import com.jmurilloc.pfc.scouts.exceptions.TripDtoException;
+import com.jmurilloc.pfc.scouts.exceptions.TripNotCreatedException;
+import com.jmurilloc.pfc.scouts.exceptions.TripNotFoundException;
 import com.jmurilloc.pfc.scouts.exceptions.UserNotFoundException;
 import com.jmurilloc.pfc.scouts.exceptions.UserWithAffiliateException;
 import com.jmurilloc.pfc.scouts.exceptions.UserWithoutRoleException;
@@ -48,7 +52,8 @@ public class HandlerExceptionController
             RoleNotFoundException.class,
             CouncilNotFoundException.class,
             PostNotFoundException.class,
-            NewNotFoundException.class } )
+            NewNotFoundException.class,
+            TripNotFoundException.class } )
     public ResponseEntity<Error> notFoundEx( Exception e )
     {
         Error error = new Error();
@@ -61,7 +66,14 @@ public class HandlerExceptionController
     
     
     @ExceptionHandler( {
-            ProductCouldntCreateException.class, CouncilDtoException.class, PostsDtoException.class, AffiliateCouldntCreateException.class, NewDtoException.class, NewNotCreateException.class } )
+            ProductCouldntCreateException.class,
+            CouncilDtoException.class,
+            PostsDtoException.class,
+            AffiliateCouldntCreateException.class,
+            NewDtoException.class,
+            NewNotCreateException.class,
+            TripDtoException.class,
+            TripNotCreatedException.class } )
     public ResponseEntity<Error> createError( Exception e )
     {
         Error error = new Error();
@@ -151,5 +163,12 @@ public class HandlerExceptionController
     public ResponseEntity<String> handlerMailException( MailException e )
     {
         return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR ).body( "No se ha podido enviar el correo. " + e.getMessage() );
+    }
+    
+    
+    @ExceptionHandler( InsuficientStockException.class )
+    public ResponseEntity<String> handlerInsuficientStockException( MailException e )
+    {
+        return ResponseEntity.status( HttpStatus.BAD_REQUEST ).body( "No hay stock suficiente. Stock actual: " + e.getMessage() );
     }
 }

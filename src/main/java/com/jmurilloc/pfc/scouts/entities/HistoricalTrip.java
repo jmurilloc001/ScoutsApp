@@ -1,8 +1,6 @@
 package com.jmurilloc.pfc.scouts.entities;
 
-import com.jmurilloc.pfc.scouts.util.MaterialsConverter;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,7 +9,6 @@ import jakarta.persistence.Table;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @Entity
 @Table( name = "historical_trips" )
@@ -34,9 +31,8 @@ public class HistoricalTrip
     @Column( name = "end_date", nullable = false )
     private LocalDate endDate;
     
-    @Column( nullable = false, columnDefinition = "JSONB" )
-    @Convert( converter = MaterialsConverter.class )
-    private Map<String, Object> materials;
+    @Column( name = "record_body", columnDefinition = "jsonb" )
+    private Object recordBody;
     
     @Column( name = "closed_at", nullable = false )
     private LocalDateTime closedAt = LocalDateTime.now();
@@ -102,15 +98,15 @@ public class HistoricalTrip
     }
     
     
-    public Map<String, Object> getMaterials()
+    public Object getRecordBody()
     {
-        return materials;
+        return recordBody;
     }
     
     
-    public void setMaterials( Map<String, Object> materials )
+    public void setRecordBody( Object recordBody )
     {
-        this.materials = materials;
+        this.recordBody = recordBody;
     }
     
     

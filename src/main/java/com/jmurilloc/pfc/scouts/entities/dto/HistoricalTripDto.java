@@ -2,7 +2,6 @@ package com.jmurilloc.pfc.scouts.entities.dto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Map;
 
 public class HistoricalTripDto
 {
@@ -12,8 +11,20 @@ public class HistoricalTripDto
     private String title;
     private LocalDate startDate;
     private LocalDate endDate;
-    private Map<String, Object> materials;
+    private Object recordBody;
     private LocalDateTime closedAt;
+    
+    
+    public Object getRecordBody()
+    {
+        return recordBody;
+    }
+    
+    
+    public void setRecordBody( Object recordBody )
+    {
+        this.recordBody = recordBody;
+    }
     
     
     public Long getId()
@@ -73,18 +84,6 @@ public class HistoricalTripDto
     public void setEndDate( LocalDate endDate )
     {
         this.endDate = endDate;
-    }
-    
-    
-    public Map<String, Object> getMaterials()
-    {
-        return materials;
-    }
-    
-    
-    public void setMaterials( Map<String, Object> materials )
-    {
-        this.materials = materials;
     }
     
     

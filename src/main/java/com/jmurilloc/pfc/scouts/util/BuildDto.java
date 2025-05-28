@@ -2,6 +2,7 @@ package com.jmurilloc.pfc.scouts.util;
 
 import com.jmurilloc.pfc.scouts.entities.Affiliate;
 import com.jmurilloc.pfc.scouts.entities.Council;
+import com.jmurilloc.pfc.scouts.entities.HistoricalTrip;
 import com.jmurilloc.pfc.scouts.entities.New;
 import com.jmurilloc.pfc.scouts.entities.Post;
 import com.jmurilloc.pfc.scouts.entities.Role;
@@ -9,6 +10,7 @@ import com.jmurilloc.pfc.scouts.entities.Trip;
 import com.jmurilloc.pfc.scouts.entities.User;
 import com.jmurilloc.pfc.scouts.entities.dto.AffiliateDto;
 import com.jmurilloc.pfc.scouts.entities.dto.CouncilDto;
+import com.jmurilloc.pfc.scouts.entities.dto.HistoricalTripDto;
 import com.jmurilloc.pfc.scouts.entities.dto.NewDto;
 import com.jmurilloc.pfc.scouts.entities.dto.PostDto;
 import com.jmurilloc.pfc.scouts.entities.dto.RoleDto;
@@ -170,6 +172,29 @@ public abstract class BuildDto
         catch ( Exception e )
         {
             throw new TripDtoException( MessageError.NEWDTO_COULD_NOT_BE_CREATED.getValue() );
+        }
+    }
+    
+    
+    public static HistoricalTripDto buildDto( HistoricalTrip historicalTrip )
+    {
+        try
+        {
+            HistoricalTripDto historicalTripDto = new HistoricalTripDto();
+            historicalTripDto.setTripId( historicalTrip.getTripId() );
+            historicalTripDto.setId( historicalTrip.getId() );
+            historicalTripDto.setTitle( historicalTrip.getTitle() );
+            historicalTripDto.setStartDate( historicalTrip.getStartDate() );
+            historicalTripDto.setEndDate( historicalTrip.getEndDate() );
+            historicalTripDto.setClosedAt( historicalTrip.getClosedAt() );
+            
+            historicalTripDto.setRecordBody( historicalTrip.getRecordBody() );
+            
+            return historicalTripDto;
+        }
+        catch ( Exception e )
+        {
+            throw new TripDtoException( MessageError.HISTORICAL_TRIPDTO_NOT_CREATED.getValue() );
         }
     }
 }

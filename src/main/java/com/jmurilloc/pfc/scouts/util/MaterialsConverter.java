@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@Converter
+@Converter( autoApply = true )
 public class MaterialsConverter implements AttributeConverter<Map<String, Object>, String>
 {
     

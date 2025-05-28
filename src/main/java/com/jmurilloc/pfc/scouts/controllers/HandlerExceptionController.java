@@ -9,6 +9,9 @@ import com.jmurilloc.pfc.scouts.exceptions.BadDataException;
 import com.jmurilloc.pfc.scouts.exceptions.CouncilDtoException;
 import com.jmurilloc.pfc.scouts.exceptions.CouncilNotFoundException;
 import com.jmurilloc.pfc.scouts.exceptions.EmailError;
+import com.jmurilloc.pfc.scouts.exceptions.HistoricalTripDtoException;
+import com.jmurilloc.pfc.scouts.exceptions.HistoricalTripNotCreatedException;
+import com.jmurilloc.pfc.scouts.exceptions.HistoricalTripNotFoundException;
 import com.jmurilloc.pfc.scouts.exceptions.InsuficientStockException;
 import com.jmurilloc.pfc.scouts.exceptions.MeetingNotFoundException;
 import com.jmurilloc.pfc.scouts.exceptions.MettingOrAffiliateNotFoundException;
@@ -53,7 +56,8 @@ public class HandlerExceptionController
             CouncilNotFoundException.class,
             PostNotFoundException.class,
             NewNotFoundException.class,
-            TripNotFoundException.class } )
+            TripNotFoundException.class,
+            HistoricalTripNotFoundException.class } )
     public ResponseEntity<Error> notFoundEx( Exception e )
     {
         Error error = new Error();
@@ -73,7 +77,9 @@ public class HandlerExceptionController
             NewDtoException.class,
             NewNotCreateException.class,
             TripDtoException.class,
-            TripNotCreatedException.class } )
+            TripNotCreatedException.class,
+            HistoricalTripDtoException.class,
+            HistoricalTripNotCreatedException.class } )
     public ResponseEntity<Error> createError( Exception e )
     {
         Error error = new Error();

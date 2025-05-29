@@ -1,6 +1,7 @@
 package com.jmurilloc.pfc.scouts.controllers;
 
 import com.jmurilloc.pfc.scouts.entities.Product;
+import com.jmurilloc.pfc.scouts.exceptions.ProductNotFoundException;
 import com.jmurilloc.pfc.scouts.services.interfaces.ProductService;
 import com.jmurilloc.pfc.scouts.util.BuildDate;
 import com.jmurilloc.pfc.scouts.util.MessageError;
@@ -142,6 +143,21 @@ public class ProductController
     {
         Pageable pageable = PageRequest.of( page, size );
         return service.listAllProducts( pageable );
+    }
+    
+    
+    @PreAuthorize( "hasRole('SCOUTER')" )
+    @GetMapping( "/{name}/stock" )
+    public ResponseEntity<Integer> getStockbyName( @PathVariable String name )
+    {
+        try
+        {
+            return ResponseEntity.ok( service.stockbyName( name ) );
+        }
+        catch ( Exception e )
+        {
+            throw new ProductNotFoundException( MessageError.PRODUCT_NOT_FOUND.getValue() );
+        }
     }
     
     

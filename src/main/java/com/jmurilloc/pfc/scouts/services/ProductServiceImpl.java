@@ -122,6 +122,19 @@ public class ProductServiceImpl implements ProductService
     }
     
     
+    @Transactional( readOnly = true )
+    @Override
+    public Integer stockbyName( String name )
+    {
+        Integer stockByName = productRepository.findStockByName( name );
+        if( stockByName == null )
+        {
+            return 0;
+        }
+        return stockByName;
+    }
+    
+    
     @Transactional
     @Override
     public void deleteProduct( Long id )

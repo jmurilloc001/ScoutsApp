@@ -39,4 +39,7 @@ public interface ProductService
     
     boolean existsByName( String name );
     
+    
+    Integer stockbyName( String name );
+    
 }

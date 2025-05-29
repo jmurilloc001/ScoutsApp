@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -143,6 +144,25 @@ public class TripController
         else
         {
             log.warn( "Failed to add product to trip with id: {}", id );
+            throw new TripNotFoundException( MessageError.TRIP_NOT_FOUND.getValue() );
+        }
+    }
+    
+    
+    @PreAuthorize( "hasRole('SCOUTER')" )
+    @DeleteMapping( "/{id}" )
+    public ResponseEntity<TripDto> deleteTrip( @PathVariable Long id )
+    {
+        log.info( "Deleting trip with id: {}", id );
+        Optional<TripDto> optionalTripDto = tripService.deleteTrip( id );
+        if( optionalTripDto.isPresent() )
+        {
+            log.info( "Trip deleted successfully with id: {}", id );
+            return ResponseEntity.ok( optionalTripDto.get() );
+        }
+        else
+        {
+            log.warn( "Failed to delete trip with id: {}", id );
             throw new TripNotFoundException( MessageError.TRIP_NOT_FOUND.getValue() );
         }
     }

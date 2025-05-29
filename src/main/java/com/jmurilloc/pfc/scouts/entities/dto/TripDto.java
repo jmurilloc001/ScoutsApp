@@ -1,7 +1,5 @@
 package com.jmurilloc.pfc.scouts.entities.dto;
 
-import com.jmurilloc.pfc.scouts.entities.Product;
-
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -12,9 +10,10 @@ public class TripDto
     private String title;
     private LocalDate startDate;
     private LocalDate endDate;
-    private Set<Product> products;
+    private Set<TripMaterialDto> materials; // Cambio de Set<Product> a Set<TripMaterialDto>
     
     
+    // Getters y Setters
     public Long getId()
     {
         return id;
@@ -63,14 +62,15 @@ public class TripDto
     }
     
     
-    public Set<Product> getProducts()
+    public Set<TripMaterialDto> getMaterials()
     {
-        return products;
+        return materials;
     }
     
     
-    public void setProducts( Set<Product> products )
+    public void setMaterials( Set<TripMaterialDto> materials )
     {
-        this.products = products;
+        this.materials = materials;
     }
 }
+

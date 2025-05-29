@@ -1,6 +1,5 @@
 package com.jmurilloc.pfc.scouts.controllers;
 
-import com.jmurilloc.pfc.scouts.entities.Product;
 import com.jmurilloc.pfc.scouts.entities.dto.TripDto;
 import com.jmurilloc.pfc.scouts.exceptions.TripNotFoundException;
 import com.jmurilloc.pfc.scouts.services.interfaces.TripService;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 @RestController
 @Slf4j
@@ -82,23 +80,32 @@ public class TripController
     @PostMapping
     public ResponseEntity<TripDto> createTrip( @RequestBody TripDto tripDto )
     {
-        if( tripDto.getProducts() == null || tripDto.getProducts().isEmpty() )
+        try
         {
-            log.info( "No products provided for trip, initializing empty product set" );
-            Set<Product> products = new HashSet<>();
-            tripDto.setProducts( products );
+            if( tripDto.getMaterials() == null || tripDto.getMaterials().isEmpty() )
+            {
+                log.info( "No products provided for trip, initializing empty product list." );
+                tripDto.setMaterials( new HashSet<>() );
+            }
+            
+            log.info( "Creating trip with title: {}", tripDto.getTitle() );
+            
+            Optional<TripDto> optionalTripDto = tripService.createTrip( tripDto );
+            if( optionalTripDto.isPresent() )
+            {
+                log.info( "Trip created successfully with id: {}", optionalTripDto.get().getId() );
+                return ResponseEntity.status( HttpStatus.CREATED ).body( optionalTripDto.get() );
+            }
+            else
+            {
+                log.warn( "Failed to create trip" );
+                throw new TripNotFoundException( MessageError.TRIP_NOT_CREATED.getValue() );
+            }
         }
-        log.info( "Creating trip with title: {}", tripDto.getTitle() );
-        Optional<TripDto> optionalTripDto = tripService.createTrip( tripDto );
-        if( optionalTripDto.isPresent() )
+        catch ( Exception e )
         {
-            log.info( "Trip created successfully with id: {}", optionalTripDto.get().getId() );
-            return ResponseEntity.status( HttpStatus.CREATED ).body( optionalTripDto.get() );
-        }
-        else
-        {
-            log.warn( "Failed to create trip" );
-            throw new TripNotFoundException( MessageError.TRIP_NOT_CREATED.getValue() );
+            log.error( "Error creating trip: {}", e.getMessage() );
+            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR ).build();
         }
     }
     

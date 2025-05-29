@@ -1,20 +1,18 @@
 package com.jmurilloc.pfc.scouts.entities;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
-@Slf4j
 @Entity
 @Table( name = "trips" )
 public class Trip
@@ -32,9 +30,8 @@ public class Trip
     @Column( name = "end_date" )
     private LocalDate endDate;
     
-    @ManyToMany
-    @JoinTable( name = "trip_product", joinColumns = @JoinColumn( name = "trip_id" ), inverseJoinColumns = @JoinColumn( name = "product_id" ) )
-    private Set<Product> products;
+    @OneToMany( mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true )
+    private Set<TripMaterial> tripMaterials = new HashSet<>();
     
     
     // Getters y setters
@@ -86,22 +83,25 @@ public class Trip
     }
     
     
-    public Set<Product> getProducts()
+    public Set<TripMaterial> getTripMaterials()
     {
-        return products;
+        return tripMaterials;
     }
     
     
-    public void setMaterials( Set<Product> products )
+    public void setTripMaterials( Set<TripMaterial> tripMaterials )
     {
-        this.products = products;
+        this.tripMaterials = tripMaterials;
     }
     
     
-    public void addProduct( Product product )
+    public void addMaterial( Product product, Integer cantidad )
     {
-        log.info( "Add product with id: {}", product.getId() );
-        this.products.add( product );
+        TripMaterial tripMaterial = new TripMaterial();
+        tripMaterial.setTrip( this );
+        tripMaterial.setProduct( product );
+        tripMaterial.setCantidad( cantidad );
+        this.tripMaterials.add( tripMaterial );
     }
-    
 }
+

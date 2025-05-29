@@ -2,8 +2,10 @@ package com.jmurilloc.pfc.scouts.services;
 
 import com.jmurilloc.pfc.scouts.entities.Product;
 import com.jmurilloc.pfc.scouts.entities.Trip;
+import com.jmurilloc.pfc.scouts.entities.TripMaterial;
 import com.jmurilloc.pfc.scouts.entities.dto.TripDto;
 import com.jmurilloc.pfc.scouts.exceptions.InsuficientStockException;
+import com.jmurilloc.pfc.scouts.repositories.TripMaterialRepository;
 import com.jmurilloc.pfc.scouts.repositories.TripRepository;
 import com.jmurilloc.pfc.scouts.services.interfaces.ProductService;
 import com.jmurilloc.pfc.scouts.services.interfaces.TripService;
@@ -26,6 +28,14 @@ public class TripServiceImpl implements TripService
     
     private TripRepository tripRepository;
     private ProductService productService;
+    private TripMaterialRepository tripMaterialRepository;
+    
+    
+    @Autowired
+    public void setTripMaterialRepository( TripMaterialRepository tripMaterialRepository )
+    {
+        this.tripMaterialRepository = tripMaterialRepository;
+    }
     
     
     @Autowired
@@ -129,6 +139,12 @@ public class TripServiceImpl implements TripService
     {
         try
         {
+            if( tripDto.getStartDate().isAfter( tripDto.getEndDate() ) )
+            {
+                log.warn( "Start date must be before end date" );
+                return Optional.empty();
+            }
+            
             log.info( "Creating trip with title: {}", tripDto.getTitle() );
             Trip trip = new Trip();
             trip.setTitle( tripDto.getTitle() );
@@ -199,34 +215,51 @@ public class TripServiceImpl implements TripService
         try
         {
             log.info( "Adding product with id: {} to trip with id: {}", productId, tripId );
+            
             Optional<Trip> tripOptional = tripRepository.findById( tripId );
             if( tripOptional.isEmpty() )
             {
+                log.warn( "Trip with id {} not found", tripId );
                 return Optional.empty();
             }
+            
             Product product = productService.findById( productId );
-            int initialstock = product.getStock();
-            if( initialstock < quantity )
+            if( product == null )
             {
-                log.warn( "Product with id: {} with insufficient stock", productId );
-                throw new InsuficientStockException( String.valueOf( product.getStock() ) );
-            }
-            Trip trip = tripOptional.get();
-            product.setStock( initialstock - quantity );
-            Product productUpdate = productService.saveProduct( product );
-            if( productUpdate == null )
-            {
-                log.error( "Error saving product with id: {}", productId );
+                log.warn( "Product with id {} not found", productId );
                 return Optional.empty();
             }
-            trip.addProduct( product );
+            
+            int initialStock = product.getStock();
+            if( initialStock < quantity )
+            {
+                log.warn( "Insufficient stock for product with id {}", productId );
+                throw new InsuficientStockException( "Available stock: " + product.getStock() );
+            }
+            
+            Trip trip = tripOptional.get();
+            
+            product.setStock( initialStock - quantity );
+            productService.saveProduct( product );
+            
+            TripMaterial tripMaterial = new TripMaterial();
+            tripMaterial.setTrip( trip );
+            tripMaterial.setProduct( product );
+            tripMaterial.setCantidad( quantity );
+            
+            trip.getTripMaterials().add( tripMaterial );
+            tripMaterialRepository.save( tripMaterial );
+            
             Trip updatedTrip = tripRepository.save( trip );
-            log.info( "Product with id: {} added to trip with id: {}", productId, tripId );
+            
+            log.info( "Product with id: {} added to trip with id: {}, quantity: {}", productId, tripId, quantity );
             return Optional.of( BuildDto.buildDto( updatedTrip ) );
         }
         catch ( Exception e )
         {
+            log.error( "Error adding product to trip: {}", e.getMessage() );
             return Optional.empty();
         }
     }
+    
 }

@@ -15,6 +15,7 @@ import com.jmurilloc.pfc.scouts.entities.dto.NewDto;
 import com.jmurilloc.pfc.scouts.entities.dto.PostDto;
 import com.jmurilloc.pfc.scouts.entities.dto.RoleDto;
 import com.jmurilloc.pfc.scouts.entities.dto.TripDto;
+import com.jmurilloc.pfc.scouts.entities.dto.TripMaterialDto;
 import com.jmurilloc.pfc.scouts.entities.dto.UserDto;
 import com.jmurilloc.pfc.scouts.exceptions.CouncilDtoException;
 import com.jmurilloc.pfc.scouts.exceptions.NewDtoException;
@@ -22,6 +23,8 @@ import com.jmurilloc.pfc.scouts.exceptions.TripDtoException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public abstract class BuildDto
 {
@@ -166,7 +169,18 @@ public abstract class BuildDto
             tripDto.setTitle( trip.getTitle() );
             tripDto.setStartDate( trip.getStartDate() );
             tripDto.setEndDate( trip.getEndDate() );
-            tripDto.setProducts( trip.getProducts() );
+            
+            // Convertir los materiales del viaje a TripMaterialDto
+            Set<TripMaterialDto> materialsDto = trip.getTripMaterials().stream().map( tripMaterial -> {
+                TripMaterialDto dto = new TripMaterialDto();
+                dto.setProductId( tripMaterial.getProduct().getId() );
+                dto.setProductName( tripMaterial.getProduct().getName() );
+                dto.setCantidad( tripMaterial.getCantidad() );
+                return dto;
+            } ).collect( Collectors.toSet() );
+            
+            tripDto.setMaterials( materialsDto );
+            
             return tripDto;
         }
         catch ( Exception e )

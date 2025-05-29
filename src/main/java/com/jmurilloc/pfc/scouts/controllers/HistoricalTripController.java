@@ -6,6 +6,7 @@ import com.jmurilloc.pfc.scouts.exceptions.HistoricalTripNotCreatedException;
 import com.jmurilloc.pfc.scouts.exceptions.HistoricalTripNotFoundException;
 import com.jmurilloc.pfc.scouts.services.interfaces.HistoricalTripService;
 import com.jmurilloc.pfc.scouts.util.MessageError;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequestMapping( "/historical-trips" )
 public class HistoricalTripController

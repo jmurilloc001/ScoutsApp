@@ -78,7 +78,7 @@ public abstract class BuildEntity
             historicalTrip.setStartDate( historicalTripDto.getStartDate() );
             historicalTrip.setRecordBody( historicalTripDto.getRecordBody() );
         }
-        catch ( RuntimeException e )
+        catch ( Exception e )
         {
             throw new HistoricalTripNotCreatedException( MessageError.HISTORICAL_TRIP_NOT_CREATED.getValue() );
         }

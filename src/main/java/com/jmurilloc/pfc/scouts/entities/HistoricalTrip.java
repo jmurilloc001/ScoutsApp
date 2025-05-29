@@ -6,9 +6,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Entity
 @Table( name = "historical_trips" )
@@ -32,7 +35,8 @@ public class HistoricalTrip
     private LocalDate endDate;
     
     @Column( name = "record_body", columnDefinition = "jsonb" )
-    private Object recordBody;
+    @JdbcTypeCode( SqlTypes.JSON )
+    private Map<String, Object> recordBody;
     
     @Column( name = "closed_at", nullable = false )
     private LocalDateTime closedAt = LocalDateTime.now();
@@ -98,13 +102,13 @@ public class HistoricalTrip
     }
     
     
-    public Object getRecordBody()
+    public Map<String, Object> getRecordBody()
     {
         return recordBody;
     }
     
     
-    public void setRecordBody( Object recordBody )
+    public void setRecordBody( Map<String, Object> recordBody )
     {
         this.recordBody = recordBody;
     }

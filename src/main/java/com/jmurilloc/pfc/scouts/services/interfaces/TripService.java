@@ -1,9 +1,11 @@
 package com.jmurilloc.pfc.scouts.services.interfaces;
 
 import com.jmurilloc.pfc.scouts.entities.dto.TripDto;
+import com.jmurilloc.pfc.scouts.exceptions.BadDataException;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface TripService
@@ -31,4 +33,10 @@ public interface TripService
     
     
     Optional<TripDto> addProductToTrip( Long tripId, Long productId, Integer quantity );
+    
+    
+    Optional<TripDto> closeTrip( Long tripId, Map<String, Integer> cantidadDevuelta ) throws BadDataException;
+    
+    
+    Optional<TripDto> updateTripMaterial( Long tripId, Long productId, Integer newQuantity );
 }

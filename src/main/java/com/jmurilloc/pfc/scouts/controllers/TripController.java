@@ -1,6 +1,8 @@
 package com.jmurilloc.pfc.scouts.controllers;
 
 import com.jmurilloc.pfc.scouts.entities.dto.TripDto;
+import com.jmurilloc.pfc.scouts.exceptions.BadDataException;
+import com.jmurilloc.pfc.scouts.exceptions.HistoricalTripNotCreatedException;
 import com.jmurilloc.pfc.scouts.exceptions.TripNotFoundException;
 import com.jmurilloc.pfc.scouts.services.interfaces.TripService;
 import com.jmurilloc.pfc.scouts.util.MessageError;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -81,33 +84,54 @@ public class TripController
     @PostMapping
     public ResponseEntity<TripDto> createTrip( @RequestBody TripDto tripDto )
     {
+        if( tripDto.getMaterials() == null || tripDto.getMaterials().isEmpty() )
+        {
+            log.info( "No products provided for trip, initializing empty product list." );
+            tripDto.setMaterials( new HashSet<>() );
+        }
+        
+        log.info( "Creating trip with title: {}", tripDto.getTitle() );
+        
+        Optional<TripDto> optionalTripDto = tripService.createTrip( tripDto );
+        if( optionalTripDto.isPresent() )
+        {
+            log.info( "Trip created successfully with id: {}", optionalTripDto.get().getId() );
+            return ResponseEntity.status( HttpStatus.CREATED ).body( optionalTripDto.get() );
+        }
+        else
+        {
+            log.warn( "Failed to create trip" );
+            throw new TripNotFoundException( MessageError.TRIP_NOT_CREATED.getValue() );
+        }
+    }
+    
+    
+    @PreAuthorize( "hasRole('SCOUTER')" )
+    @PostMapping( "/{id}/close" )
+    public ResponseEntity<TripDto> closeTrip( @PathVariable Long id, @RequestBody Map<String, Integer> cantidadesDevueltas )
+    {
+        log.info( "Cerrando trip desde el controlador." );
+        
         try
         {
-            if( tripDto.getMaterials() == null || tripDto.getMaterials().isEmpty() )
-            {
-                log.info( "No products provided for trip, initializing empty product list." );
-                tripDto.setMaterials( new HashSet<>() );
-            }
-            
-            log.info( "Creating trip with title: {}", tripDto.getTitle() );
-            
-            Optional<TripDto> optionalTripDto = tripService.createTrip( tripDto );
+            Optional<TripDto> optionalTripDto = tripService.closeTrip( id, cantidadesDevueltas );
             if( optionalTripDto.isPresent() )
             {
-                log.info( "Trip created successfully with id: {}", optionalTripDto.get().getId() );
+                log.info( "Trip closed successfully with id: {}", optionalTripDto.get().getId() );
                 return ResponseEntity.status( HttpStatus.CREATED ).body( optionalTripDto.get() );
             }
             else
             {
-                log.warn( "Failed to create trip" );
-                throw new TripNotFoundException( MessageError.TRIP_NOT_CREATED.getValue() );
+                log.warn( "Failed to close trip with id: {}", id );
+                throw new TripNotFoundException( MessageError.TRIP_NOT_FOUND.getValue() );
             }
         }
-        catch ( Exception e )
+        catch ( BadDataException e )
         {
-            log.error( "Error creating trip: {}", e.getMessage() );
-            return ResponseEntity.status( HttpStatus.INTERNAL_SERVER_ERROR ).build();
+            log.warn( "Exception during the close trip with id: {}", id );
+            throw new HistoricalTripNotCreatedException( MessageError.HISTORICAL_TRIP_NOT_CREATED.getValue() );
         }
+        
     }
     
     
@@ -144,6 +168,25 @@ public class TripController
         else
         {
             log.warn( "Failed to add product to trip with id: {}", id );
+            throw new TripNotFoundException( MessageError.TRIP_NOT_FOUND.getValue() );
+        }
+    }
+    
+    
+    @PreAuthorize( "hasRole('SCOUTER')" )
+    @PutMapping( "/{id}/product/{productId}/updateQuantity/{newquantity}" )
+    public ResponseEntity<TripDto> updateProductQuantity( @PathVariable Long id, @PathVariable Long productId, @PathVariable Integer newquantity )
+    {
+        log.info( "Actualizando la salida con id: {} y el producto con id: {}", id, productId );
+        Optional<TripDto> optionalTripDto = tripService.updateTripMaterial( id, productId, newquantity );
+        if( optionalTripDto.isPresent() )
+        {
+            log.info( "La cantidad del producto se ha actualizado satisfactoriamente para la salida con id: {}", id );
+            return ResponseEntity.status( HttpStatus.CREATED ).body( optionalTripDto.get() );
+        }
+        else
+        {
+            log.warn( "Failed to update product quantity for trip with id: {}", id );
             throw new TripNotFoundException( MessageError.TRIP_NOT_FOUND.getValue() );
         }
     }

@@ -115,10 +115,24 @@ public class ProductServiceImpl implements ProductService
     }
     
     
+    @Transactional( readOnly = true )
     @Override
     public boolean existsByName( String name )
     {
         return productRepository.existsByName( name );
+    }
+    
+    
+    @Transactional( readOnly = true )
+    @Override
+    public Optional<Product> findByName( String name )
+    {
+        Optional<Product> product = productRepository.findByName( name );
+        if( product.isEmpty() )
+        {
+            throw new ProductNotFoundException( MessageError.PRODUCT_NOT_FOUND.getValue() );
+        }
+        return product;
     }
     
     

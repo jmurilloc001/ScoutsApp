@@ -8,6 +8,7 @@ import com.jmurilloc.pfc.scouts.entities.dto.TripDto;
 import com.jmurilloc.pfc.scouts.exceptions.BadDataException;
 import com.jmurilloc.pfc.scouts.exceptions.HistoricalTripNotCreatedException;
 import com.jmurilloc.pfc.scouts.exceptions.InsuficientStockException;
+import com.jmurilloc.pfc.scouts.exceptions.ProductNotFoundException;
 import com.jmurilloc.pfc.scouts.exceptions.TripNotFoundException;
 import com.jmurilloc.pfc.scouts.repositories.TripMaterialRepository;
 import com.jmurilloc.pfc.scouts.repositories.TripRepository;
@@ -342,6 +343,21 @@ public class TripServiceImpl implements TripService
     
     @Transactional
     @Override
+    public Optional<TripDto> updateTripMaterialByName( Long tripId, String productName, Integer newQuantity )
+    {
+        log.info( "Actualizando la salida con id: {}, Nueva cantidad del producto con nombre: {}", tripId, productName );
+        Optional<Product> byName = productService.findByName( productName );
+        if( byName.isEmpty() )
+        {
+            log.warn( "No se ha encontrado ningún producto con el nombre {}", productName );
+            throw new ProductNotFoundException( MessageError.PRODUCT_NOT_FOUND.getValue() );
+        }
+        return updateTripMaterial( tripId, byName.get().getId(), newQuantity );
+    }
+    
+    
+    @Transactional
+    @Override
     public Optional<TripDto> closeTrip( Long tripId, Map<String, Integer> cantidadDevuelta ) throws BadDataException
     {
         log.info( "Closing trip with id: {}", tripId );
@@ -381,6 +397,7 @@ public class TripServiceImpl implements TripService
                 }
                 log.info( "Guardando tripMaterial con la cantidad nueva devuelta " );
                 tripMaterial.setCantidad( cantidadDevueltaProducto );
+                tripMaterial.getProduct().setStock( tripMaterial.getProduct().getStock() + cantidadDevueltaProducto );
                 tripMaterialRepository.save( tripMaterial );
             }
         }

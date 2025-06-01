@@ -193,6 +193,25 @@ public class TripController
     
     
     @PreAuthorize( "hasRole('SCOUTER')" )
+    @PutMapping( "/{id}/productName/{productName}/updateQuantity/{newquantity}" )
+    public ResponseEntity<TripDto> updateProductByNameQuantity( @PathVariable Long id, @PathVariable String productName, @PathVariable Integer newquantity )
+    {
+        log.info( "Actualizando la salida con id: {} y el producto: {}", id, productName );
+        Optional<TripDto> optionalTripDto = tripService.updateTripMaterialByName( id, productName, newquantity );
+        if( optionalTripDto.isPresent() )
+        {
+            log.info( "La cantidad del producto se ha actualizado satisfactoriamente para la salida con id: {}", id );
+            return ResponseEntity.status( HttpStatus.CREATED ).body( optionalTripDto.get() );
+        }
+        else
+        {
+            log.warn( "Failed to update product quantity for trip with id: {}", id );
+            throw new TripNotFoundException( MessageError.TRIP_NOT_FOUND.getValue() );
+        }
+    }
+    
+    
+    @PreAuthorize( "hasRole('SCOUTER')" )
     @DeleteMapping( "/{id}" )
     public ResponseEntity<TripDto> deleteTrip( @PathVariable Long id )
     {

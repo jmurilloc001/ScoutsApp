@@ -39,4 +39,7 @@ public interface TripService
     
     
     Optional<TripDto> updateTripMaterial( Long tripId, Long productId, Integer newQuantity );
+    
+    
+    Optional<TripDto> updateTripMaterialByName( Long tripId, String productName, Integer newQuantity );
 }

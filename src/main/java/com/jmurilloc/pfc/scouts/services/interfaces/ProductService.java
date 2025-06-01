@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductService
 {
@@ -38,6 +39,9 @@ public interface ProductService
     
     
     boolean existsByName( String name );
+    
+    
+    Optional<Product> findByName( String name );
     
     
     Integer stockbyName( String name );

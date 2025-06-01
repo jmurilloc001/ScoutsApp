@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long>
@@ -30,6 +31,9 @@ public interface ProductRepository extends JpaRepository<Product, Long>
     
     
     boolean existsByName( String name );
+    
+    
+    Optional<Product> findByName( String name );
     
     
     @Query( "SELECT p.stock FROM Product p WHERE p.name = :name" )

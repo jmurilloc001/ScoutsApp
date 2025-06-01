@@ -173,7 +173,7 @@ public class HandlerExceptionController
     
     
     @ExceptionHandler( InsuficientStockException.class )
-    public ResponseEntity<String> handlerInsuficientStockException( MailException e )
+    public ResponseEntity<String> handlerInsuficientStockException( Exception e )
     {
         return ResponseEntity.status( HttpStatus.BAD_REQUEST ).body( "No hay stock suficiente. Stock actual: " + e.getMessage() );
     }

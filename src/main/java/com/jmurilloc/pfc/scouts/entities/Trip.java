@@ -33,8 +33,10 @@ public class Trip
     @OneToMany( mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true )
     private Set<TripMaterial> tripMaterials = new HashSet<>();
     
+    @Column( name = "close" )
+    private boolean close;
     
-    // Getters y setters
+    
     public Long getId()
     {
         return id;
@@ -102,6 +104,18 @@ public class Trip
         tripMaterial.setProduct( product );
         tripMaterial.setCantidad( cantidad );
         this.tripMaterials.add( tripMaterial );
+    }
+    
+    
+    public boolean isClose()
+    {
+        return close;
+    }
+    
+    
+    public void setClose( boolean close )
+    {
+        this.close = close;
     }
 }
 

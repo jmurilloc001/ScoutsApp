@@ -409,6 +409,9 @@ public class TripServiceImpl implements TripService
             log.error( "Error al crear el HistoricalTrip" );
             throw new HistoricalTripNotCreatedException( MessageError.HISTORICAL_TRIP_NOT_CREATED.getValue() );
         }
+        log.info( "Poniendo close a true" );
+        trip.setClose( true );
+        tripRepository.save( trip );
         log.info( "FINALIZADO: Devolviendo el trip con id: {}", tripId );
         return Optional.of( BuildDto.buildDto( trip ) );
     }

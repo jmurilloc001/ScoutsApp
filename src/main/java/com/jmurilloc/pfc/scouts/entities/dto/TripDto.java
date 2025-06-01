@@ -11,9 +11,9 @@ public class TripDto
     private LocalDate startDate;
     private LocalDate endDate;
     private Set<TripMaterialDto> materials; // Cambio de Set<Product> a Set<TripMaterialDto>
+    private Boolean close = false;
     
     
-    // Getters y Setters
     public Long getId()
     {
         return id;
@@ -71,6 +71,18 @@ public class TripDto
     public void setMaterials( Set<TripMaterialDto> materials )
     {
         this.materials = materials;
+    }
+    
+    
+    public Boolean getClose()
+    {
+        return close;
+    }
+    
+    
+    public void setClose( Boolean close )
+    {
+        this.close = close;
     }
 }
 

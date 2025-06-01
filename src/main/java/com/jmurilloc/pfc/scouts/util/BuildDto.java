@@ -169,6 +169,7 @@ public abstract class BuildDto
             tripDto.setTitle( trip.getTitle() );
             tripDto.setStartDate( trip.getStartDate() );
             tripDto.setEndDate( trip.getEndDate() );
+            tripDto.setClose( trip.isClose() );
             
             // Convertir los materiales del viaje a TripMaterialDto
             Set<TripMaterialDto> materialsDto = trip.getTripMaterials().stream().map( tripMaterial -> {

@@ -42,4 +42,7 @@ public interface TripService
     
     
     Optional<TripDto> updateTripMaterialByName( Long tripId, String productName, Integer newQuantity );
+    
+    
+    Page<TripDto> getTripsPaginatedByCloseFalse( int page, int size );
 }

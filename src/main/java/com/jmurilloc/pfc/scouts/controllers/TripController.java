@@ -228,4 +228,23 @@ public class TripController
             throw new TripNotFoundException( MessageError.TRIP_NOT_FOUND.getValue() );
         }
     }
+    
+    
+    @PreAuthorize( "hasRole('SCOUTER')" )
+    @GetMapping( "/paginated/close/false" )
+    public ResponseEntity<Page<TripDto>> getAllTripsPaginatedByCloseFalse( @RequestParam int page, @RequestParam int size )
+    {
+        log.info( "Buscando salidas paginadas" );
+        Page<TripDto> tripPage = tripService.getTripsPaginatedByCloseFalse( page, size );
+        if( tripPage.hasContent() )
+        {
+            log.info( "Trips found: {}", tripPage.getTotalElements() );
+            return ResponseEntity.ok( tripPage );
+        }
+        else
+        {
+            log.warn( "No trips found" );
+            throw new TripNotFoundException( MessageError.TRIP_NOT_FOUND.getValue() );
+        }
+    }
 }

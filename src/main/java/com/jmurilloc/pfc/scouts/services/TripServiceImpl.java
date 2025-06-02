@@ -356,6 +356,26 @@ public class TripServiceImpl implements TripService
     }
     
     
+    @Transactional( readOnly = true )
+    @Override
+    public Page<TripDto> getTripsPaginatedByCloseFalse( int page, int size )
+    {
+        try
+        {
+            log.info( "Consifuiendo todas las salidas con paginación y con close en false: page {}, size {}", page, size );
+            Pageable pageable = PageRequest.of( page, size );
+            Page<Trip> tripsPage = tripRepository.findAllByCloseFalse( pageable );
+            
+            return tripsPage.map( BuildDto::buildDto );
+        }
+        catch ( Exception e )
+        {
+            log.error( "Error retrieving paginated trips: {}", e.getMessage() );
+            return Page.empty();
+        }
+    }
+    
+    
     @Transactional
     @Override
     public Optional<TripDto> closeTrip( Long tripId, Map<String, Integer> cantidadDevuelta ) throws BadDataException

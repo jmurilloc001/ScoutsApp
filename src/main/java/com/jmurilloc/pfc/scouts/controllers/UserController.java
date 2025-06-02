@@ -148,7 +148,7 @@ public class UserController
             return UtilValidation.validation( result );
         }
         user.setAdmin( false );
-        return ResponseEntity.status( HttpStatus.CREATED ).body( service.save( user ) );
+        return ResponseEntity.status( HttpStatus.CREATED ).body( BuildDto.builDto( service.save( user ) ) );
     }
     
     

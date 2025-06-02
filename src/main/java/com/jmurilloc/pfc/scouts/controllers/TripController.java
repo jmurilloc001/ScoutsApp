@@ -26,6 +26,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Controlador REST para gestionar las operaciones relacionadas con los viajes (Trip).
+ */
 @RestController
 @Slf4j
 @RequestMapping( "/trips" )
@@ -35,6 +38,12 @@ public class TripController
     private TripService tripService;
     
     
+    /**
+     * Inyecta el servicio de viajes.
+     *
+     * @param tripService
+     *         Servicio de viajes.
+     */
     @Autowired
     public void setTripService( TripService tripService )
     {
@@ -42,6 +51,13 @@ public class TripController
     }
     
     
+    /**
+     * Obtiene un viaje por su ID.
+     *
+     * @param id
+     *         ID del viaje.
+     * @return El viaje encontrado o lanza excepción si no existe.
+     */
     @PreAuthorize( "hasRole('SCOUTER')" )
     @GetMapping( "/{id}" )
     public ResponseEntity<TripDto> getTripById( @PathVariable Long id )
@@ -61,6 +77,15 @@ public class TripController
     }
     
     
+    /**
+     * Obtiene todos los viajes de forma paginada.
+     *
+     * @param page
+     *         Número de página.
+     * @param size
+     *         Tamaño de la página.
+     * @return Página de viajes.
+     */
     @PreAuthorize( "hasRole('SCOUTER')" )
     @GetMapping( "/paginated" )
     public ResponseEntity<Page<TripDto>> getAllTripsPaginated( @RequestParam int page, @RequestParam int size )
@@ -80,6 +105,13 @@ public class TripController
     }
     
     
+    /**
+     * Crea un nuevo viaje.
+     *
+     * @param tripDto
+     *         Datos del viaje a crear.
+     * @return El viaje creado.
+     */
     @PreAuthorize( "hasRole('SCOUTER')" )
     @PostMapping
     public ResponseEntity<TripDto> createTrip( @RequestBody TripDto tripDto )
@@ -106,6 +138,15 @@ public class TripController
     }
     
     
+    /**
+     * Cierra un viaje y registra las cantidades devueltas.
+     *
+     * @param id
+     *         ID del viaje.
+     * @param cantidadesDevueltas
+     *         Mapa de productos y cantidades devueltas.
+     * @return El viaje cerrado.
+     */
     @PreAuthorize( "hasRole('SCOUTER')" )
     @PostMapping( "/{id}/close" )
     public ResponseEntity<TripDto> closeTrip( @PathVariable Long id, @RequestBody Map<String, Integer> cantidadesDevueltas )
@@ -135,6 +176,15 @@ public class TripController
     }
     
     
+    /**
+     * Actualiza los datos de un viaje.
+     *
+     * @param id
+     *         ID del viaje.
+     * @param tripDto
+     *         Datos actualizados del viaje.
+     * @return El viaje actualizado.
+     */
     @PreAuthorize( "hasRole('SCOUTER')" )
     @PutMapping( "/{id}" )
     public ResponseEntity<TripDto> updateTrip( @PathVariable Long id, TripDto tripDto )
@@ -154,6 +204,17 @@ public class TripController
     }
     
     
+    /**
+     * Añade un producto a un viaje.
+     *
+     * @param id
+     *         ID del viaje.
+     * @param productId
+     *         ID del producto.
+     * @param quantity
+     *         Cantidad del producto.
+     * @return El viaje actualizado.
+     */
     @PreAuthorize( "hasRole('SCOUTER')" )
     @PutMapping( "/{id}/addProduct" )
     public ResponseEntity<TripDto> addProduct( @PathVariable Long id, @RequestParam Long productId, @RequestParam Integer quantity )
@@ -173,6 +234,17 @@ public class TripController
     }
     
     
+    /**
+     * Actualiza la cantidad de un producto en un viaje por ID de producto.
+     *
+     * @param id
+     *         ID del viaje.
+     * @param productId
+     *         ID del producto.
+     * @param newquantity
+     *         Nueva cantidad.
+     * @return El viaje actualizado.
+     */
     @PreAuthorize( "hasRole('SCOUTER')" )
     @PutMapping( "/{id}/product/{productId}/updateQuantity/{newquantity}" )
     public ResponseEntity<TripDto> updateProductQuantity( @PathVariable Long id, @PathVariable Long productId, @PathVariable Integer newquantity )
@@ -192,6 +264,17 @@ public class TripController
     }
     
     
+    /**
+     * Actualiza la cantidad de un producto en un viaje por nombre de producto.
+     *
+     * @param id
+     *         ID del viaje.
+     * @param productName
+     *         Nombre del producto.
+     * @param newquantity
+     *         Nueva cantidad.
+     * @return El viaje actualizado.
+     */
     @PreAuthorize( "hasRole('SCOUTER')" )
     @PutMapping( "/{id}/productName/{productName}/updateQuantity/{newquantity}" )
     public ResponseEntity<TripDto> updateProductByNameQuantity( @PathVariable Long id, @PathVariable String productName, @PathVariable Integer newquantity )
@@ -211,6 +294,13 @@ public class TripController
     }
     
     
+    /**
+     * Elimina un viaje por su ID.
+     *
+     * @param id
+     *         ID del viaje.
+     * @return El viaje eliminado.
+     */
     @PreAuthorize( "hasRole('SCOUTER')" )
     @DeleteMapping( "/{id}" )
     public ResponseEntity<TripDto> deleteTrip( @PathVariable Long id )
@@ -230,6 +320,15 @@ public class TripController
     }
     
     
+    /**
+     * Obtiene todos los viajes no cerrados de forma paginada.
+     *
+     * @param page
+     *         Número de página.
+     * @param size
+     *         Tamaño de la página.
+     * @return Página de viajes no cerrados.
+     */
     @PreAuthorize( "hasRole('SCOUTER')" )
     @GetMapping( "/paginated/close/false" )
     public ResponseEntity<Page<TripDto>> getAllTripsPaginatedByCloseFalse( @RequestParam int page, @RequestParam int size )

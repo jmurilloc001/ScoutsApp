@@ -71,6 +71,13 @@ public class TripServiceImpl implements TripService
     }
     
     
+    /**
+     * Busca un viaje por su ID.
+     *
+     * @param id
+     *         ID del viaje.
+     * @return Optional con el TripDto si existe.
+     */
     @Transactional( readOnly = true )
     @Override
     public Optional<TripDto> getTripById( Long id )
@@ -86,6 +93,13 @@ public class TripServiceImpl implements TripService
     }
     
     
+    /**
+     * Busca un viaje por su título.
+     *
+     * @param title
+     *         Título del viaje.
+     * @return Optional con el TripDto si existe.
+     */
     @Transactional( readOnly = true )
     @Override
     public Optional<TripDto> getTripByTitle( String title )
@@ -110,6 +124,11 @@ public class TripServiceImpl implements TripService
     }
     
     
+    /**
+     * Obtiene todos los viajes.
+     *
+     * @return Lista de TripDto.
+     */
     @Transactional( readOnly = true )
     @Override
     public List<TripDto> getAllTrips()
@@ -133,6 +152,15 @@ public class TripServiceImpl implements TripService
     }
     
     
+    /**
+     * Obtiene todos los viajes de forma paginada.
+     *
+     * @param page
+     *         Número de página.
+     * @param size
+     *         Tamaño de la página.
+     * @return Página de TripDto.
+     */
     @Override
     public Page<TripDto> getAllTripsPaginated( int page, int size )
     {
@@ -152,6 +180,13 @@ public class TripServiceImpl implements TripService
     }
     
     
+    /**
+     * Crea un nuevo viaje.
+     *
+     * @param tripDto
+     *         Datos del viaje.
+     * @return Optional con el TripDto creado.
+     */
     @Transactional
     @Override
     public Optional<TripDto> createTrip( TripDto tripDto )
@@ -181,6 +216,15 @@ public class TripServiceImpl implements TripService
     }
     
     
+    /**
+     * Actualiza los datos de un viaje.
+     *
+     * @param id
+     *         ID del viaje.
+     * @param tripDto
+     *         Datos actualizados.
+     * @return Optional con el TripDto actualizado.
+     */
     @Transactional
     @Override
     public Optional<TripDto> updateTrip( Long id, TripDto tripDto )
@@ -202,6 +246,13 @@ public class TripServiceImpl implements TripService
     }
     
     
+    /**
+     * Elimina un viaje por su ID y devuelve el stock de los productos asociados.
+     *
+     * @param id
+     *         ID del viaje.
+     * @return Optional con el TripDto eliminado.
+     */
     @Transactional
     @Override
     public Optional<TripDto> deleteTrip( Long id )
@@ -239,6 +290,17 @@ public class TripServiceImpl implements TripService
     }
     
     
+    /**
+     * Añade un producto a un viaje.
+     *
+     * @param tripId
+     *         ID del viaje.
+     * @param productId
+     *         ID del producto.
+     * @param quantity
+     *         Cantidad a añadir.
+     * @return Optional con el TripDto actualizado.
+     */
     @Transactional
     @Override
     public Optional<TripDto> addProductToTrip( Long tripId, Long productId, Integer quantity )
@@ -300,6 +362,17 @@ public class TripServiceImpl implements TripService
     }
     
     
+    /**
+     * Actualiza la cantidad de un producto en un viaje.
+     *
+     * @param tripId
+     *         ID del viaje.
+     * @param productId
+     *         ID del producto.
+     * @param newQuantity
+     *         Nueva cantidad.
+     * @return Optional con el TripDto actualizado.
+     */
     @Transactional
     @Override
     public Optional<TripDto> updateTripMaterial( Long tripId, Long productId, Integer newQuantity )
@@ -341,6 +414,17 @@ public class TripServiceImpl implements TripService
     }
     
     
+    /**
+     * Actualiza la cantidad de un producto en un viaje por nombre de producto.
+     *
+     * @param tripId
+     *         ID del viaje.
+     * @param productName
+     *         Nombre del producto.
+     * @param newQuantity
+     *         Nueva cantidad.
+     * @return Optional con el TripDto actualizado.
+     */
     @Transactional
     @Override
     public Optional<TripDto> updateTripMaterialByName( Long tripId, String productName, Integer newQuantity )
@@ -356,6 +440,15 @@ public class TripServiceImpl implements TripService
     }
     
     
+    /**
+     * Obtiene los viajes no cerrados de forma paginada.
+     *
+     * @param page
+     *         Número de página.
+     * @param size
+     *         Tamaño de la página.
+     * @return Página de TripDto con close en false.
+     */
     @Transactional( readOnly = true )
     @Override
     public Page<TripDto> getTripsPaginatedByCloseFalse( int page, int size )
@@ -376,6 +469,17 @@ public class TripServiceImpl implements TripService
     }
     
     
+    /**
+     * Cierra un viaje, registra las cantidades devueltas y crea el histórico.
+     *
+     * @param tripId
+     *         ID del viaje.
+     * @param cantidadDevuelta
+     *         Mapa de productos y cantidades devueltas.
+     * @return Optional con el TripDto cerrado.
+     * @throws BadDataException
+     *         Si los datos son incorrectos.
+     */
     @Transactional
     @Override
     public Optional<TripDto> closeTrip( Long tripId, Map<String, Integer> cantidadDevuelta ) throws BadDataException

@@ -15,6 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+/**
+ * Servicio para gestionar operaciones relacionadas con los HistoricalTrip.
+ */
 @Slf4j
 @Service
 public class HistoricalTripServiceImpl implements HistoricalTripService
@@ -24,6 +27,13 @@ public class HistoricalTripServiceImpl implements HistoricalTripService
     private HistoricalTripRepository historicalTripRepository;
     
     
+    /**
+     * Obtiene un HistoricalTrip por su ID.
+     *
+     * @param id
+     *         ID del HistoricalTrip.
+     * @return Optional con el DTO del HistoricalTrip si existe.
+     */
     @Transactional( readOnly = true )
     @Override
     public Optional<HistoricalTripDto> getHistoricalTripById( Long id )
@@ -48,6 +58,13 @@ public class HistoricalTripServiceImpl implements HistoricalTripService
     }
     
     
+    /**
+     * Obtiene un HistoricalTrip por el ID del Trip original.
+     *
+     * @param tripId
+     *         ID del Trip original.
+     * @return Optional con el DTO del HistoricalTrip si existe.
+     */
     @Transactional( readOnly = true )
     @Override
     public Optional<HistoricalTripDto> getHistoricalTripByTripId( Long tripId )
@@ -72,6 +89,15 @@ public class HistoricalTripServiceImpl implements HistoricalTripService
     }
     
     
+    /**
+     * Obtiene todos los HistoricalTrip de forma paginada.
+     *
+     * @param page
+     *         Número de página.
+     * @param size
+     *         Tamaño de la página.
+     * @return Página de DTOs de HistoricalTrip.
+     */
     @Transactional( readOnly = true )
     @Override
     public Page<HistoricalTripDto> getAllHistoricalTripsPaginated( int page, int size )
@@ -97,6 +123,13 @@ public class HistoricalTripServiceImpl implements HistoricalTripService
     }
     
     
+    /**
+     * Crea un nuevo HistoricalTrip.
+     *
+     * @param historicalTripDto
+     *         DTO con los datos del HistoricalTrip a crear.
+     * @return Optional con el DTO del HistoricalTrip creado.
+     */
     @Transactional
     @Override
     public Optional<HistoricalTripDto> createHistoricalTrip( HistoricalTripDto historicalTripDto )
@@ -117,6 +150,15 @@ public class HistoricalTripServiceImpl implements HistoricalTripService
     }
     
     
+    /**
+     * Actualiza un HistoricalTrip existente.
+     *
+     * @param id
+     *         ID del HistoricalTrip a actualizar.
+     * @param historicalTrip
+     *         Entidad con los nuevos datos.
+     * @return Optional con el DTO del HistoricalTrip actualizado.
+     */
     @Transactional
     @Override
     public Optional<HistoricalTripDto> updateHistoricalTrip( Long id, HistoricalTrip historicalTrip )
@@ -150,6 +192,13 @@ public class HistoricalTripServiceImpl implements HistoricalTripService
     }
     
     
+    /**
+     * Elimina un HistoricalTrip por su ID.
+     *
+     * @param id
+     *         ID del HistoricalTrip a eliminar.
+     * @return Optional con el DTO del HistoricalTrip eliminado.
+     */
     @Transactional
     @Override
     public Optional<HistoricalTripDto> deleteHistoricalTrip( Long id )

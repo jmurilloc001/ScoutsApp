@@ -51,9 +51,9 @@ public class EmailServiceImpl implements EmailService
     {
         try
         {
-            sendSimpleEmail( mailScoutsGroup, subject, text );
+            sendSimpleEmail( mailScoutsGroup, subject, text + "\n\n Correo de contacto: " + from );
             log.info( "Enviando respaldo a: {} ", from );
-            sendSimpleEmail( from, "Respaldo mensaje de contacto", "RESPALDO de: \n" + text + "\nRecibirá una respuesta de contacto en breve." );
+            sendSimpleEmail( from, "Respaldo mensaje de contacto", "RESPALDO de: \n" + text + "\n\nRecibirá una respuesta de contacto en breve." );
         }
         catch ( Exception e )
         {

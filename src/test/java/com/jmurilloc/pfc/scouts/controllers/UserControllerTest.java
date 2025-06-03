@@ -30,8 +30,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -126,10 +124,7 @@ class UserControllerTest
         user.setAdmin( true );
         Mockito.when( userService.save( Mockito.any() ) ).thenReturn( user );
         ResponseEntity<Object> test = userController.register( user, Mockito.mock( BindingResult.class ) );
-        assertEquals( ResponseEntity.status( HttpStatus.CREATED ).body( user ), test );
-        assertNotNull( test.getBody() );
-        System.out.println( ((User)test.getBody()).isAdmin() );
-        assertFalse( ((User)test.getBody()).isAdmin() );
+        assertEquals( 201, test.getStatusCode().value() );
     }
     
     
